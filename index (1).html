@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE ARCHIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1a140f; --panel:#231b14; --line:#3a2d21; --fg:#ece0c6; --muted:#a08e72;
+  --accent:#b8925a; --accent-dim:#6e5533; --wine:#6e1f24;
+  --display:'Cormorant Garamond', Georgia, serif;
+  --mono:'EB Garamond', Georgia, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:16px;line-height:1.45;min-height:100vh;overflow-x:hidden}
+/* film grain */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.06;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{padding:48px 0 20px;border-bottom:1px solid var(--line)}
+.kicker{font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase}
+h1{font-family:'UnifrakturMaguntia', var(--display);font-weight:400;font-size:clamp(58px,13vw,160px);line-height:1;font-weight:400;letter-spacing:-.01em;margin:10px 0 10px}
+h1 em{font-style:normal;font-weight:400;color:var(--accent)}
+h1 span{color:var(--accent)}
+.sub{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+
+/* nav */
+nav{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:0;color:var(--muted);font-family:var(--display);font-size:21px;font-weight:600;letter-spacing:.12em;padding:14px 18px 12px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button:hover{color:var(--fg)}
+nav button.on{color:var(--fg);border-bottom-color:var(--accent)}
+
+/* controls */
+.controls{position:sticky;top:0;z-index:20;background:rgba(26,20,15,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 220px;background:var(--panel);border:1px solid var(--line);color:var(--fg);font-family:var(--mono);font-size:16px;font-style:italic;padding:9px 12px;outline:none}
+.search:focus{border-color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:none;border:1px solid var(--line);color:var(--muted);font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.14em;padding:7px 11px;cursor:pointer;text-transform:uppercase}
+.chip:hover{color:var(--fg);border-color:var(--muted)}
+.chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip.fav.on{background:var(--wine);border-color:var(--wine);color:var(--fg)}
+.jump{display:flex;gap:2px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump a{font-family:var(--display);font-weight:600;font-size:19px;min-width:26px;text-align:center;padding:2px 0;color:var(--fg)}
+.jump a:hover{color:var(--accent)}
+.jump a.off{color:#4a3c2e;pointer-events:none}
+.stats{font-size:13px;letter-spacing:.12em;font-style:italic;color:var(--muted);text-transform:uppercase;margin-top:10px}
+.stats b{color:var(--fg);font-weight:500}
+
+/* letter sections */
+section.letter{padding:36px 0 8px;scroll-margin-top:150px}
+.lhead{display:flex;align-items:flex-end;gap:14px;margin-bottom:18px}
+.lhead .L{font-family:var(--display);font-style:italic;font-weight:500;font-size:104px;line-height:.75;color:var(--accent)}
+.lhead .rule{flex:1;height:5px;border-top:1px solid var(--accent-dim);border-bottom:1px solid var(--accent-dim);margin-bottom:10px}
+.lhead .n{font-size:14px;font-style:italic;letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 16px}
+.card{position:relative;cursor:default}
+.cover{position:relative;aspect-ratio:1;background:var(--panel);border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.35);overflow:hidden}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:sepia(.25) saturate(.85) contrast(1.02);transition:opacity .4s, filter .25s, transform .25s}
+.card.loaded .cover img{opacity:1}
+.card:hover .cover img{filter:none;transform:scale(1.03)}
+.ph{position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;
+  background:radial-gradient(circle at 30% 25%,#2d2219,#1d160f 70%)}
+.ph .pa{font-family:var(--display);font-style:italic;font-weight:600;font-size:24px;line-height:1;color:var(--accent);word-break:break-word}
+.ph .pt{font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.card.loaded .ph{display:none}
+.star{position:absolute;top:0;right:0;z-index:2;background:var(--wine);color:var(--fg);font-size:12px;padding:3px 7px}
+.meta{padding-top:8px}
+.artist{font-size:12px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title{font-family:var(--display);font-weight:600;font-size:21px;line-height:1.1;margin-top:2px;word-break:break-word}
+.yr{display:flex;gap:8px;align-items:center;font-size:14px;font-style:italic;color:var(--muted);margin-top:4px}
+.tag{border:1px solid var(--accent-dim);color:var(--accent);font-style:normal;font-size:10px;letter-spacing:.12em;padding:0 5px}
+
+/* queue + empty */
+.queue{margin:56px 0 0;padding:24px 0;border-top:1px solid var(--line)}
+.queue h2{font-family:var(--display);font-style:italic;font-weight:600;font-size:44px}
+.queue h2 span{color:var(--accent)}
+.queue ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.queue li{border:1px solid var(--line);padding:5px 11px;font-size:15px;font-style:italic;color:var(--muted)}
+.empty{padding:80px 0;text-align:center}
+.empty .big{font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(48px,10vw,110px);color:var(--accent-dim)}
+.empty p{color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-top:8px}
+.paper{--fg:#1d1712;--muted:#76695a;--line:#e4ddd1;--panel:#f4f0e9;--accent:#8a6838;--accent-dim:#cdb894;
+  background:#fff;color:var(--fg);padding-bottom:48px}
+.paper .ph{background:var(--panel)}
+.paper .cover{box-shadow:0 4px 12px rgba(40,25,10,.12)}
+.paper .queue{margin-top:40px}
+footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;color:#5c4b38;text-transform:uppercase}
+@media (max-width:520px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:18px 12px}
+  .lhead .L{font-size:80px}
+  header{padding-top:32px}
+}
+</style>
+</head>
+<body>
+
+<script>
+/* =====================================================================
+   THE ARCHIVE — RECORDS
+   TO ADD AN ALBUM: paste a new line ANYWHERE in this list.
+   Order doesn't matter — the site sorts A–Z and by year on its own.
+
+   { artist: "Name", title: "Album", year: 1999 }
+   Optional extras:
+     fav: true          → ★ favorite
+     type: "EP"         → EP / CP (compilation) / BS (b-sides) / GH (greatest hits) / LV (live)
+     cover: "https://…" → use your own cover image instead of the auto one
+   ===================================================================== */
+const RECORDS = [
+  // A
+  { artist:"Acid Bath", title:"When the Kite String Pops", year:1994 },
+  { artist:"Agent Orange", title:"Living in Darkness", year:1981 },
+  { artist:"Alex G", title:"Trick", year:2012 },
+  { artist:"Alice In Chains", title:"Facelift", year:1990 },
+  { artist:"Alice In Chains", title:"Dirt", year:1992 },
+  { artist:"Alice In Chains", title:"Jar of Flies", year:1994 },
+  { artist:"Alice In Chains", title:"Alice in Chains", year:1995 },
+  { artist:"Alice In Chains", title:"Black Gives Way to Blue", year:2009 },
+  { artist:"Alice In Chains", title:"The Devil Put Dinosaurs Here", year:2013 },
+  { artist:"Arctic Monkeys", title:"Whatever People Say I Am, That's What I'm Not", year:2006 },
+  { artist:"Arctic Monkeys", title:"Favourite Worst Nightmare", year:2007 },
+  { artist:"Arctic Monkeys", title:"Humbug", year:2009 },
+  { artist:"Arctic Monkeys", title:"Suck It and See", year:2011 },
+  { artist:"Arctic Monkeys", title:"AM", year:2013 },
+  { artist:"Arctic Monkeys", title:"Tranquility Base Hotel & Casino", year:2018 },
+  { artist:"Arctic Monkeys", title:"The Car", year:2022 },
+  // B
+  { artist:"Babes in Toyland", title:"Fontanelle", year:1992 },
+  { artist:"Babes in Toyland", title:"Painkillers", year:1993 },
+  { artist:"The Backseat Lovers", title:"When We Were Friends", year:2019 },
+  { artist:"Bad Brains", title:"Bad Brains", year:1982 },
+  { artist:"Bad Brains", title:"Rock for Light", year:1983 },
+  { artist:"Bad Brains", title:"I Against I", year:1986 },
+  { artist:"The Beatles", title:"Please Please Me", year:1963 },
+  { artist:"The Beatles", title:"With The Beatles", year:1963 },
+  { artist:"The Beatles", title:"A Hard Day's Night", year:1964 },
+  { artist:"The Beatles", title:"Help!", year:1965 },
+  { artist:"The Beatles", title:"Rubber Soul", year:1965 },
+  { artist:"The Beatles", title:"Revolver", year:1966 },
+  { artist:"The Beatles", title:"Sgt. Pepper's Lonely Hearts Club Band", year:1967 },
+  { artist:"The Beatles", title:"Magical Mystery Tour", year:1967 },
+  { artist:"The Beatles", title:"The Beatles", year:1968 },
+  { artist:"The Beatles", title:"Abbey Road", year:1969 },
+  { artist:"The Beatles", title:"Hey Jude", year:1970, type:"CP" },
+  { artist:"The Beatles", title:"Let It Be", year:1970 },
+  { artist:"Billy Joel", title:"The Stranger", year:1977 },
+  { artist:"Björk", title:"Debut", year:1993 },
+  { artist:"Björk", title:"Post", year:1995 },
+  { artist:"Björk", title:"Homogenic", year:1997 },
+  { artist:"Black Country, New Road", title:"For the first time", year:2021 },
+  { artist:"Black Country, New Road", title:"Ants From Up There", year:2022 },
+  { artist:"Black Flag", title:"Nervous Breakdown", year:1979, type:"EP" },
+  { artist:"Black Flag", title:"Damaged", year:1981 },
+  { artist:"Black Flag", title:"Slip It In", year:1984 },
+  { artist:"Black Flag", title:"Loose Nut", year:1985 },
+  { artist:"Black Sabbath", title:"Black Sabbath", year:1970 },
+  { artist:"Black Sabbath", title:"Paranoid", year:1970 },
+  { artist:"Blur", title:"Modern Life Is Rubbish", year:1993 },
+  { artist:"Blur", title:"Parklife", year:1994 },
+  { artist:"Blur", title:"The Great Escape", year:1995 },
+  { artist:"Blur", title:"Blur", year:1997 },
+  { artist:"Blur", title:"13", year:1999 },
+  { artist:"Blur", title:"The Ballad of Darren", year:2023 },
+  { artist:"bôa", title:"Twilight", year:2001 },
+  { artist:"The Breeders", title:"Pod", year:1990 },
+  { artist:"The Breeders", title:"Last Splash", year:1993 },
+  { artist:"Broadcast", title:"Work and Non Work", year:1997 },
+  { artist:"Broadcast", title:"The Noise Made by People", year:2000 },
+  { artist:"Broadcast", title:"Haha Sound", year:2003 },
+  { artist:"Broadcast", title:"Tender Buttons", year:2005 },
+  { artist:"Bush", title:"Sixteen Stone", year:1994 },
+  { artist:"Bush", title:"Razorblade Suitcase", year:1996 },
+  { artist:"Bush", title:"The Science of Things", year:1999 },
+  // C
+  { artist:"Café Tacvba", title:"Café Tacvba", year:1992 },
+  { artist:"Café Tacvba", title:"Re", year:1994 },
+  { artist:"Café Tacvba", title:"Avalancha de éxitos", year:1996 },
+  { artist:"Café Tacvba", title:"Tiempo transcurrido", year:2001, type:"CP" },
+  { artist:"Café Tacvba", title:"Cuatro Caminos", year:2003 },
+  { artist:"Café Tacvba", title:"SINO", year:2007 },
+  { artist:"Cage The Elephant", title:"Cage The Elephant", year:2009 },
+  { artist:"Cage The Elephant", title:"Thank You Happy Birthday", year:2011 },
+  { artist:"Cage The Elephant", title:"Melophobia", year:2013 },
+  { artist:"Cage The Elephant", title:"Tell Me I'm Pretty", year:2015 },
+  { artist:"Cage The Elephant", title:"Social Cues", year:2019 },
+  { artist:"Caifanes", title:"Caifanes", year:1988 },
+  { artist:"Caifanes", title:"El Diablito", year:1990 },
+  { artist:"Caifanes", title:"El Silencio", year:1992 },
+  { artist:"Caifanes", title:"El Nervio del Volcán", year:1994 },
+  { artist:"The Cardigans", title:"First Band on the Moon", year:1996 },
+  { artist:"The Cardigans", title:"Gran Turismo", year:1998 },
+  { artist:"The Cars", title:"The Cars", year:1978 },
+  { artist:"The Cars", title:"Candy-O", year:1979 },
+  { artist:"Car Seat Headrest", title:"Twin Fantasy", year:"2011/2018" },
+  { artist:"Car Seat Headrest", title:"Teens of Denial", year:2016 },
+  { artist:"Catalyst", title:"...", year:2023, type:"EP" },
+  { artist:"certain seasons", title:"Align Again", year:2023 },
+  { artist:"Chat Pile", title:"God's Country", year:2022 },
+  { artist:"Chevelle", title:"Wonder What's Next", year:2002 },
+  { artist:"Chevelle", title:"This Type of Thinking (Could Do Us In)", year:2004 },
+  { artist:"Chevelle", title:"Sci-Fi Crimes", year:2009 },
+  { artist:"Chevelle", title:"Hats Off to the Bull", year:2011 },
+  { artist:"The Clash", title:"London Calling", year:1979 },
+  { artist:"Cocteau Twins", title:"The Moon and the Melodies", year:1986 },
+  { artist:"Cocteau Twins", title:"Heaven or Las Vegas", year:1990 },
+  { artist:"Cocteau Twins", title:"Milk & Kisses", year:1996 },
+  { artist:"Converge", title:"Jane Doe", year:2001 },
+  { artist:"Converge", title:"Petition the Empty Sky", year:2005 },
+  { artist:"Converge", title:"The Dusk in Us", year:2017 },
+  { artist:"Converge", title:"Love Is Not Enough", year:2026 },
+  { artist:"The Cranberries", title:"Everybody Else Is Doing It, So Why Can't We?", year:1993 },
+  { artist:"The Cranberries", title:"No Need to Argue", year:1994 },
+  { artist:"The Cranberries", title:"Bury the Hatchet", year:1999 },
+  { artist:"Crowbar", title:"Odd Fellows Rest", year:2003 },
+  { artist:"Crowbar", title:"Sonic Excess in Its Purest Form", year:2003 },
+  { artist:"Crowbar", title:"Broken Glass", year:2006 },
+  { artist:"Crowbar", title:"Crowbar", year:2010 },
+  { artist:"Crowbar", title:"Time Heals Nothing", year:2010 },
+  { artist:"Crystal Castles", title:"Crystal Castles", year:2008 },
+  { artist:"The Cure", title:"Three Imaginary Boys", year:1979 },
+  { artist:"The Cure", title:"Seventeen Seconds", year:1980 },
+  { artist:"The Cure", title:"Pornography", year:1982 },
+  { artist:"The Cure", title:"The Head on the Door", year:1985 },
+  { artist:"The Cure", title:"Kiss Me Kiss Me Kiss Me", year:1987 },
+  { artist:"The Cure", title:"Disintegration", year:1989 },
+  { artist:"The Cure", title:"Wish", year:1992 },
+  { artist:"The Cure", title:"Bloodflowers", year:2000 },
+  { artist:"The Cure", title:"The Cure", year:2004 },
+  { artist:"The Cure", title:"4:13 Dream", year:2008 },
+  // D
+  { artist:"Deftones", title:"Adrenaline", year:1995, fav:true },
+  { artist:"Deftones", title:"Around the Fur", year:1997 },
+  { artist:"Deftones", title:"White Pony", year:2000 },
+  { artist:"Deftones", title:"Deftones", year:2003 },
+  { artist:"Deftones", title:"Saturday Night Wrist", year:2006 },
+  { artist:"Deftones", title:"Diamond Eyes", year:2010 },
+  { artist:"Deftones", title:"Koi No Yokan", year:2012 },
+  { artist:"Dinosaur Jr.", title:"You're Living All Over Me", year:1987 },
+  { artist:"Dinosaur Jr.", title:"Without a Sound", year:1994 },
+  { artist:"Duster", title:"Stratosphere", year:1998 },
+  { artist:"Duster", title:"Duster", year:2019 },
+  { artist:"Duster", title:"Together", year:2022 },
+  // G
+  { artist:"The Garden", title:"haha", year:2015 },
+  { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018 },
+  { artist:"The Garden", title:"Kiss My Super Bowl Ring", year:2020 },
+  { artist:"The Garden", title:"HORSESHIT ON ROUTE 66", year:2022 },
+  // H
+  { artist:"Hole", title:"Celebrity Skin", year:1998, fav:true },
+  // K
+  { artist:"Korn", title:"Korn", year:1994, fav:true },
+  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true },
+  { artist:"Korn", title:"Follow the Leader", year:1998, fav:true },
+  { artist:"Korn", title:"Issues", year:1999 },
+  { artist:"Korn", title:"Untouchables", year:2002 },
+  { artist:"Korn", title:"Take a Look in the Mirror", year:2003 },
+  { artist:"Korn", title:"See You on the Other Side", year:2005 },
+  // M
+  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, fav:true },
+  { artist:"My Bloody Valentine", title:"Loveless", year:1991, fav:true },
+  { artist:"My Bloody Valentine", title:"m b v", year:2013 },
+  // P
+  { artist:"A Perfect Circle", title:"Mer de Noms", year:2000 },
+  { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, fav:true },
+  // R
+  { artist:"Radiohead", title:"Pablo Honey", year:1993 },
+  { artist:"Radiohead", title:"The Bends", year:1995 },
+  { artist:"Radiohead", title:"OK Computer", year:1997 },
+  { artist:"Radiohead", title:"Kid A", year:2000 },
+  { artist:"Radiohead", title:"Amnesiac", year:2001 },
+  { artist:"Radiohead", title:"Hail to the Thief", year:2003 },
+  { artist:"Radiohead", title:"In Rainbows", year:2007 },
+  // S
+  { artist:"The Smashing Pumpkins", title:"Siamese Dream", year:1993 },
+  { artist:"The Smashing Pumpkins", title:"Mellon Collie and the Infinite Sadness", year:1995 },
+  { artist:"Sonic Youth", title:"Daydream Nation", year:1988 },
+  { artist:"Sonic Youth", title:"Goo", year:1990 },
+  { artist:"Sonic Youth", title:"Dirty", year:1992 },
+  { artist:"Sonic Youth", title:"Washing Machine", year:1995 },
+  { artist:"Sonic Youth", title:"A Thousand Leaves", year:1998 },
+  { artist:"Sonic Youth", title:"Rather Ripped", year:2006 },
+];
+
+/* Bands you still want to add — one name per line */
+const QUEUE = [
+  "The Addicts","The Adolescents","AFI","American Football",
+  "Bauhaus","Basement","Bikini Kill","The Blood Brothers",
+  "Ceremony","Cheap Trick",
+];
+</script>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">vol. 02 — rev. 2026</div>
+    <h1><em>The</em> Archive<span>.</span></h1>
+    <div class="sub"><span>records</span><span>/</span><span>books</span><span>/</span><span>photographs</span><span>/</span><span>machines</span></div>
+  </header>
+  <nav id="nav">
+    <button data-tab="records" class="on">RECORDS</button>
+    <button data-tab="bookshelf">BOOKSHELF</button>
+    <button data-tab="photography">PHOTOGRAPHY</button>
+    <button data-tab="garage">GARAGE</button>
+  </nav>
+</div>
+
+<div id="records-view">
+  <div class="controls">
+    <div class="wrap">
+      <div class="row">
+        <input id="q" class="search" type="search" placeholder="search artist, album, year…" autocomplete="off">
+        <div class="chips" id="chips">
+          <button class="chip on" data-f="all">All</button>
+          <button class="chip fav" data-f="fav">★ Favorites</button>
+          <button class="chip" data-f="LP">LP</button>
+          <button class="chip" data-f="EP">EP</button>
+          <button class="chip" data-f="CP">Comp</button>
+        </div>
+      </div>
+      <div class="jump" id="jump"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+  <div class="paper">
+    <main class="wrap" id="list"></main>
+    <div class="wrap"><div class="queue" id="queue"></div></div>
+  </div>
+</div>
+
+<div id="other-view" class="wrap" hidden>
+  <div class="empty"><div class="big" id="other-title">Bookshelf</div><p>under construction</p></div>
+</div>
+
+<div class="wrap"><footer>the archive · est. 2025</footer></div>
+
+<script>
+(() => {
+  const TYPE_LABEL = {EP:"EP", CP:"COMP", BS:"B-SIDES", GH:"HITS", LV:"LIVE"};
+  const strip = s => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const sortName = a => strip(a).replace(/^(the|a|an)\s+/i, "").toLowerCase();
+  const letterOf = a => { const c = sortName(a).charAt(0).toUpperCase(); return /[A-Z]/.test(c) ? c : "#"; };
+  const yearNum = y => parseInt(y, 10) || 0;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  const data = RECORDS.map(r => ({...r, type:(r.type || "LP").toUpperCase(), _s:sortName(r.artist), _L:letterOf(r.artist)}))
+    .sort((a,b) => a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title));
+
+  const $ = id => document.getElementById(id);
+  let filter = "all", query = "";
+
+  /* ---------- cover art: Apple Music first, MusicBrainz as backup ---------- */
+  const norm = s => strip(s).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const cacheGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const cacheSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const WEEK = 7 * 864e5;
+
+  // fetch JSON, waiting and retrying if the service says "slow down"
+  async function getJSON(url, tries = 4) {
+    for (let i = 0; i < tries; i++) {
+      const res = await fetch(url);
+      if (res.ok) return res.json();
+      if (res.status === 403 || res.status === 429 || res.status === 503) { await sleep(2000 * (i + 1) ** 2); continue; }
+      throw new Error("HTTP " + res.status);
+    }
+    throw new Error("rate limited");
+  }
+
+  async function fromITunes(r) {
+    const term = encodeURIComponent(r.artist + " " + r.title);
+    const j = await getJSON(`https://itunes.apple.com/search?term=${term}&entity=album&limit=25`);
+    const a = norm(r.artist).slice(0, 6), t = norm(r.title);
+    const byArtist = (j.results || []).filter(x => norm(x.artistName).includes(a));
+    const best = byArtist.find(x => norm(x.collectionName) === t)
+              || byArtist.find(x => norm(x.collectionName).startsWith(t) && t.length > 1)
+              || (t.length > 3 ? byArtist.find(x => norm(x.collectionName).includes(t)) : null);
+    return best ? best.artworkUrl100.replace("100x100bb", "600x600bb") : null;
+  }
+
+  // MusicBrainz allows ~1 request per second, so these run one at a time
+  let mbChain = Promise.resolve();
+  function fromMusicBrainz(r) {
+    const job = mbChain.then(async () => {
+      await sleep(1100);
+      const q = encodeURIComponent(`releasegroup:"${r.title.replace(/"/g, "")}" AND artist:"${r.artist.replace(/"/g, "")}"`);
+      const j = await getJSON(`https://musicbrainz.org/ws/2/release-group/?query=${q}&fmt=json&limit=3`);
+      const rg = (j["release-groups"] || [])[0];
+      return rg ? `https://coverartarchive.org/release-group/${rg.id}/front-500` : null;
+    });
+    mbChain = job.catch(() => {});
+    return job;
+  }
+
+  async function findCover(r) {
+    if (r.cover) return r.cover;
+    const key = "cover2:" + r.artist + "|" + r.title;
+    const hit = cacheGet(key);
+    if (hit && hit.url) return hit.url;
+    if (hit && hit.none && Date.now() - hit.t < WEEK) return null;
+    let url = null, failed = false;
+    try { url = await fromITunes(r); } catch { failed = true; }
+    if (!url) { try { url = await fromMusicBrainz(r); } catch { failed = true; } }
+    if (url) cacheSet(key, {url});
+    else if (!failed) cacheSet(key, {none:true, t:Date.now()}); // genuinely not found: retry in a week
+    return url;
+  }
+
+  let active = 0; const pending = [];
+  const enqueue = fn => { pending.push(fn); pump(); };
+  function pump() {
+    while (active < 2 && pending.length) {
+      active++;
+      pending.shift()().catch(() => {}).finally(() => { active--; pump(); });
+    }
+  }
+  const io = "IntersectionObserver" in window ? new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const card = e.target, r = card._rec;
+      enqueue(() => findCover(r).then(url => {
+        if (!url) return;
+        const img = card.querySelector("img");
+        img.onload = () => card.classList.add("loaded");
+        img.onerror = () => { try { localStorage.removeItem("cover2:" + r.artist + "|" + r.title); } catch {} };
+        img.src = url;
+      }));
+    });
+  }, {rootMargin:"300px"}) : null;
+
+  /* ---------- render ---------- */
+  function matches(r) {
+    if (filter === "fav" && !r.fav) return false;
+    if (["LP","EP","CP"].includes(filter) && r.type !== filter) return false;
+    if (!query) return true;
+    const hay = norm(r.artist + " " + r.title + " " + r.year);
+    return hay.includes(norm(query));
+  }
+
+  function card(r) {
+    const el = document.createElement("article");
+    el.className = "card";
+    el._rec = r;
+    el.innerHTML = `
+      <div class="cover">
+        ${r.fav ? '<div class="star">★</div>' : ""}
+        <div class="ph"><div class="pa">${esc(r.artist)}</div><div class="pt">${esc(r.title)}</div></div>
+        <img alt="${esc(r.artist)} — ${esc(r.title)}" loading="lazy">
+      </div>
+      <div class="meta">
+        <div class="artist">${esc(r.artist)}</div>
+        <div class="title">${esc(r.title)}</div>
+        <div class="yr"><span>${esc(r.year || "—")}</span>${r.type !== "LP" ? `<span class="tag">${TYPE_LABEL[r.type] || esc(r.type)}</span>` : ""}</div>
+      </div>`;
+    if (io) io.observe(el);
+    return el;
+  }
+
+  function render() {
+    const list = $("list"); list.innerHTML = "";
+    const shown = data.filter(matches);
+    const groups = {};
+    shown.forEach(r => (groups[r._L] ||= []).push(r));
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("");
+
+    $("jump").innerHTML = letters.map(L =>
+      `<a href="#L-${L === "#" ? "num" : L}" class="${groups[L] ? "" : "off"}">${L}</a>`).join("");
+
+    letters.filter(L => groups[L]).forEach(L => {
+      const sec = document.createElement("section");
+      sec.className = "letter";
+      sec.id = "L-" + (L === "#" ? "num" : L);
+      sec.innerHTML = `<div class="lhead"><div class="L">${L}</div><div class="rule"></div><div class="n">${String(groups[L].length).padStart(2,"0")}</div></div><div class="grid"></div>`;
+      const grid = sec.querySelector(".grid");
+      groups[L].forEach(r => grid.appendChild(card(r)));
+      list.appendChild(sec);
+    });
+
+    if (!shown.length) list.innerHTML = `<div class="empty"><div class="big">Nothing</div><p>no records match</p></div>`;
+
+    const artists = new Set(shown.map(r => r.artist)).size;
+    const favs = shown.filter(r => r.fav).length;
+    $("stats").innerHTML = `<b>${shown.length}</b> records · <b>${artists}</b> artists · <b>${favs}</b> ★`;
+  }
+
+  $("queue").innerHTML = `<h2>On Queue<span>.</span></h2><ul>${
+    [...QUEUE].sort((a,b) => sortName(a).localeCompare(sortName(b))).map(b => `<li>${esc(b)}</li>`).join("")}</ul>`;
+
+  /* ---------- controls ---------- */
+  $("q").addEventListener("input", e => { query = e.target.value.trim(); render(); });
+  $("chips").addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    filter = b.dataset.f;
+    document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c === b));
+    render();
+  });
+  $("nav").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    document.querySelectorAll("nav button").forEach(n => n.classList.toggle("on", n === b));
+    const isRec = b.dataset.tab === "records";
+    $("records-view").hidden = !isRec;
+    $("other-view").hidden = isRec;
+    $("other-title").textContent = b.textContent;
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
