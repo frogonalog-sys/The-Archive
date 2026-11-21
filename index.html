@@ -153,7 +153,10 @@ footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;
 .sheen{position:absolute;inset:0;border-radius:50%;
   background:conic-gradient(from 20deg,transparent 0 10%,rgba(255,255,255,.22) 14%,transparent 22% 55%,rgba(255,255,255,.16) 62%,transparent 70%)}
 .label{position:absolute;inset:33%;border-radius:50%;overflow:hidden;background:#c9b48d;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
-.label img{width:100%;height:100%;object-fit:cover;display:block}
+.label img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:50% 50%}
+.disc.see-through .spin{box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.12)}
+.disc.see-through .vinyl{backdrop-filter:blur(2px)}
+.record.reallabel .hole{opacity:.0}
 .hole{position:absolute;left:50%;top:50%;width:3.2%;height:3.2%;transform:translate(-50%,-50%);border-radius:50%;background:#17110c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
 
 .info{padding:40px 36px 36px;font-family:var(--mono);font-size:16px;line-height:1.5}
@@ -221,6 +224,8 @@ body.locked{overflow:hidden}
      genre: "Shoegaze"  → shown under the title; used by the Genre filter and sort
      notes: "…"         → your thoughts, shown in the album's pop-up
      rating: 4.5        → stars in the pop-up (out of 5)
+     labelImg: "labels/…jpg" → photo of YOUR record's center label (square crop)
+     vinyl: "smoke"     → your record's color: black, clear, smoke, white, or any color like "#7a1f2b"
    ===================================================================== */
 const RECORDS = [
   // A
@@ -356,6 +361,8 @@ const RECORDS = [
   { artist:"Duster", title:"Stratosphere", year:1998, genre:"Slowcore" },
   { artist:"Duster", title:"Duster", year:2019, genre:"Slowcore" },
   { artist:"Duster", title:"Together", year:2022, genre:"Slowcore" },
+  // F
+  { artist:"Fleshwater", title:"We're Not Here to Be Loved", year:2022, genre:"Alt Metal", labelImg:"labels/fleshwater-were-not-here-to-be-loved.jpg", vinyl:"smoke" },
   // G
   { artist:"The Garden", title:"haha", year:2015, genre:"Punk" },
   { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018, genre:"Punk" },
@@ -404,10 +411,82 @@ const QUEUE = [
   "Ceremony","Cheap Trick",
 ];
 
+/* Real center labels found online (photos/scans of actual pressings). */
+const SAVED_LABELS = {
+  "Alice In Chains — Dirt": {"img": "https://coverartarchive.org/release/2f0f5a06-f592-46fb-a782-6437ae81f4b9/5553910763-500.jpg"},
+  "Alice In Chains — Black Gives Way to Blue": {"img": "https://coverartarchive.org/release/e76320b7-6474-3eb7-bf82-0d4527251097/5554365548-500.jpg"},
+  "Arctic Monkeys — Whatever People Say I Am, That's What I'm Not": {"img": "https://coverartarchive.org/release/c4acd09c-97c1-3b75-9cdb-6b8d7e90c857/41977685431-500.jpg"},
+  "Arctic Monkeys — Favourite Worst Nightmare": {"img": "https://coverartarchive.org/release/2ec59625-c178-4188-8e2b-25910d6ded7f/44391316588-500.jpg"},
+  "Arctic Monkeys — AM": {"img": "https://coverartarchive.org/release/e9ba022d-d91a-493e-b02d-62e1b46f1be0/45351847160-500.jpg"},
+  "Bad Brains — Rock for Light": {"img": "https://coverartarchive.org/release/e4fbab9f-b390-4639-ad25-372803b87db4/46118625569-500.jpg"},
+  "The Beatles — Please Please Me": {"img": "https://coverartarchive.org/release/2999bc64-9246-41b1-9469-178a1a9a9227/15159100289-500.jpg"},
+  "The Beatles — With The Beatles": {"img": "https://coverartarchive.org/release/1ddc316c-2578-4aac-a975-5e21b33a4549/17702647387-500.jpg"},
+  "The Beatles — A Hard Day's Night": {"img": "https://coverartarchive.org/release/09f82d30-2d77-4475-b74f-8628d10fd9d4/19265031759-500.jpg"},
+  "The Beatles — Help!": {"img": "https://coverartarchive.org/release/06b116fe-58be-43a8-8569-32c335b9c38f/24165453816-500.jpg"},
+  "The Beatles — Rubber Soul": {"img": "https://coverartarchive.org/release/cc1ff06c-2fed-47e9-97f7-6d8cbba90833/6824907126-500.jpg"},
+  "The Beatles — Revolver": {"img": "https://coverartarchive.org/release/2b5a87b8-186f-4185-b8e5-566333e3058e/12361207839-500.jpg"},
+  "The Beatles — Sgt. Pepper's Lonely Hearts Club Band": {"img": "https://coverartarchive.org/release/44b7cab1-0ce1-404e-9089-b458eb3fa530/25310300877-500.jpg"},
+  "The Beatles — Abbey Road": {"img": "https://coverartarchive.org/release/ed787f95-6668-4767-889c-0e4a720c739f/11935652639-500.jpg"},
+  "The Beatles — Hey Jude": {"img": "https://coverartarchive.org/release/09dbed94-8c29-4ba0-8822-709ae1b6761f/32943628879-500.jpg"},
+  "The Beatles — Let It Be": {"img": "https://coverartarchive.org/release/8d5347a5-9ecb-44be-a213-860aaaf5d0b8/30652480285-500.jpg"},
+  "Billy Joel — The Stranger": {"img": "https://coverartarchive.org/release/21e36d1b-1390-4599-b1ba-b11cdb8d6bd1/31407057545-500.jpg"},
+  "Björk — Debut": {"img": "https://coverartarchive.org/release/ed0255d9-a858-4daf-93c1-ac75893f86da/23646578150-500.jpg"},
+  "Björk — Post": {"img": "https://coverartarchive.org/release/b8561e73-4226-4fc8-a8a7-0516f9499390/38887808157-500.jpg"},
+  "Björk — Homogenic": {"img": "https://coverartarchive.org/release/38912012-9b91-3a09-8d82-0eaae7c8617c/23654045389-500.jpg"},
+  "Black Country, New Road — Ants From Up There": {"img": "https://coverartarchive.org/release/0788e1b9-d989-4a8f-9a9a-244d6338f014/34134163861-500.jpg", "zoom": 3.08, "x": 51.3, "y": 50.2},
+  "Black Flag — Nervous Breakdown": {"img": "https://coverartarchive.org/release/fef0e187-e1ea-47c6-88d3-fa19a05c077f/5742486148-500.jpg", "zoom": 1.6, "x": 50.0, "y": 50.7},
+  "Black Sabbath — Black Sabbath": {"img": "https://coverartarchive.org/release/7bf3d510-5c38-406b-a63e-d0373d35bf8f/36215376329-500.jpg"},
+  "Blur — The Great Escape": {"img": "https://coverartarchive.org/release/bc34d207-3134-4a37-83da-5d59d6555e53/41263109396-500.jpg"},
+  "Blur — Blur": {"img": "https://coverartarchive.org/release/5b75693a-f19e-401c-a320-bdedd45b6a2e/46481826561-500.jpg", "zoom": 3.3, "x": 51.0, "y": 51.0},
+  "The Breeders — Pod": {"img": "https://coverartarchive.org/release/21d9626e-8dc7-42a9-b852-ebfbf91393ca/28829022121-500.jpg"},
+  "The Breeders — Last Splash": {"img": "https://coverartarchive.org/release/57cda1d0-3dab-490d-b5b2-1caa70b641d2/37152459517-500.jpg"},
+  "Bush — Sixteen Stone": {"img": "https://coverartarchive.org/release/f6d242b5-2acc-458b-aa89-2570f8ac8023/34748912856-500.jpg"},
+  "Bush — The Science of Things": {"img": "https://coverartarchive.org/release/813cd94b-b744-4a26-824e-878a9a4d58d4/26619625085-500.jpg"},
+  "Cage The Elephant — Cage The Elephant": {"img": "https://coverartarchive.org/release/d0635a10-e1a2-4233-925a-8b9c04cd0e18/35087297579-500.jpg"},
+  "Cage The Elephant — Melophobia": {"img": "https://coverartarchive.org/release/40a9a455-ea9b-4490-8d66-ab21478b3110/35103937273-500.jpg"},
+  "Cage The Elephant — Tell Me I'm Pretty": {"img": "https://coverartarchive.org/release/aa4fa457-d395-4ec2-b657-9e41d85280ee/16614860440-500.jpg"},
+  "The Cardigans — First Band on the Moon": {"img": "https://coverartarchive.org/release/77861d12-6b56-4a73-8d44-828dd953f130/35750546297-500.jpg"},
+  "The Cardigans — Gran Turismo": {"img": "https://coverartarchive.org/release/fdb928dd-859e-4e4c-8a62-ee374de17813/22329876902-500.jpg"},
+  "The Cars — The Cars": {"img": "https://coverartarchive.org/release/a47b6ee6-266e-44d8-9a26-251107eae25a/4487288811-500.jpg"},
+  "The Cars — Candy-O": {"img": "https://coverartarchive.org/release/ded5df55-8ad6-4521-80fe-41c5e9cf8970/46391943617-500.jpg"},
+  "Car Seat Headrest — Teens of Denial": {"img": "https://coverartarchive.org/release/e4f21a9a-7a01-4905-818f-09e4f06cef1b/19483649114-500.jpg"},
+  "Chevelle — This Type of Thinking (Could Do Us In)": {"img": "https://coverartarchive.org/release/4119aac7-f85d-46e3-88f8-00fc0520500b/43030762329-500.jpg"},
+  "The Clash — London Calling": {"img": "https://coverartarchive.org/release/417b88f3-c423-492a-aea4-c3f64c3f0cf4/36923209258-500.jpg"},
+  "The Cure — Three Imaginary Boys": {"img": "https://coverartarchive.org/release/38753b29-71ab-4b65-b244-466824a8b79a/38964840219-500.jpg"},
+  "The Cure — Seventeen Seconds": {"img": "https://coverartarchive.org/release/7e21d693-4c1e-3219-8fbc-94d9a2d1bc0f/38964868043-500.jpg"},
+  "The Cure — Pornography": {"img": "https://coverartarchive.org/release/873ec3fb-60b4-49e4-b90d-f93af926fb6a/31800922374-500.jpg"},
+  "The Cure — The Head on the Door": {"img": "https://coverartarchive.org/release/7c54274c-6fb9-414b-857e-bedb6d4262e5/20133183525-500.jpg"},
+  "The Cure — Kiss Me Kiss Me Kiss Me": {"img": "https://coverartarchive.org/release/cb56031a-9e43-42a7-ba80-c21c3ad9aab2/38965537037-500.jpg"},
+  "The Cure — Disintegration": {"img": "https://coverartarchive.org/release/aee58873-47f9-49b7-8550-5913a1a0170d/4433215007-500.jpg"},
+  "The Cure — Wish": {"img": "https://coverartarchive.org/release/0d5f0ccc-e41a-451d-8845-4675921982cc/34220774906-500.jpg"},
+  "The Cure — Bloodflowers": {"img": "https://coverartarchive.org/release/2e8cd5ae-2caf-4d4d-99ec-300c7fd57656/42271909609-500.jpg"},
+  "The Cure — The Cure": {"img": "https://coverartarchive.org/release/c100a398-3132-48a8-a5fc-c3e908ac17dc/38966725372-500.jpg"},
+  "Deftones — Saturday Night Wrist": {"img": "https://coverartarchive.org/release/45127ff8-0a5e-41a8-94e4-53b0184b0fe8/30477775444-500.jpg"},
+  "Korn — Follow the Leader": {"img": "https://coverartarchive.org/release/87dbd4bb-15f1-4a82-bf3b-95b2ae496114/44748597887-500.jpg"},
+  "Korn — Issues": {"img": "https://coverartarchive.org/release/3de8256e-7e5b-4e2b-bc30-de4808994313/44837868452-500.jpg"},
+  "My Bloody Valentine — Isn't Anything": {"img": "https://coverartarchive.org/release/aa313901-b027-472a-bd8b-2761cd3bebbe/23809412329-500.jpg"},
+  "My Bloody Valentine — Loveless": {"img": "https://coverartarchive.org/release/2fd724cb-63f0-4c50-a7bc-7a156d3d3f5a/6227546780-500.jpg"},
+  "My Bloody Valentine — m b v": {"img": "https://coverartarchive.org/release/60015c5c-e5c8-48c8-baf4-ba92005bd849/28968757661-500.jpg"},
+  "Radiohead — Pablo Honey": {"img": "https://coverartarchive.org/release/b1a9b282-7f04-4d14-9aea-bcd2b33e3156/30809381851-500.jpg"},
+  "Radiohead — OK Computer": {"img": "https://coverartarchive.org/release/541a0976-ca45-3c0f-89e5-26bc376f58d1/6175501527-500.jpg"},
+  "Radiohead — Kid A": {"img": "https://coverartarchive.org/release/677cf459-923a-49ca-b144-90083728d2dc/30809806416-500.jpg"},
+  "Radiohead — Amnesiac": {"img": "https://coverartarchive.org/release/3c623574-f027-3b61-b232-4fa99ef0e8ee/30809837250-500.jpg"},
+  "Radiohead — Hail to the Thief": {"img": "https://coverartarchive.org/release/f847d298-e2d8-43ed-97ed-7c7b01ff03bc/24770546433-500.jpg"},
+  "Radiohead — In Rainbows": {"img": "https://coverartarchive.org/release/ea92a194-2d60-35c7-9d56-0e1dba20cd45/32993173277-500.jpg"},
+  "The Smashing Pumpkins — Siamese Dream": {"img": "https://coverartarchive.org/release/22e5b621-7b7c-4168-a536-3090b79c17b6/40991281005-500.jpg", "zoom": 1.36, "x": 51.0, "y": 51.0},
+  "The Smashing Pumpkins — Mellon Collie and the Infinite Sadness": {"img": "https://coverartarchive.org/release/bc3a5888-39b4-39d4-a10e-cc1b5309ba6a/41698902846-500.jpg"},
+  "Sonic Youth — Daydream Nation": {"img": "https://coverartarchive.org/release/48919b65-da77-44c8-9135-72f3b54f3eab/36624497931-500.jpg"},
+  "Sonic Youth — Goo": {"img": "https://coverartarchive.org/release/dbd56048-cd34-4fde-a07a-4d54429c472e/29919530744-500.jpg"},
+  "Sonic Youth — Dirty": {"img": "https://coverartarchive.org/release/bef1be2e-de8a-4284-b33e-981ea09be843/29919676518-500.jpg"},
+  "Sonic Youth — Washing Machine": {"img": "https://coverartarchive.org/release/ed51a0a2-6e14-48eb-b925-7c15b41ee62c/36757999891-500.jpg"},
+  "Sonic Youth — Rather Ripped": {"img": "https://coverartarchive.org/release/7843549f-919f-4be5-80cb-624e5b32f8b8/42632705043-500.jpg"},
+};
+
 /* Saved cover links, so the site doesn't have to look them up.
    You never need to edit this. New albums get looked up automatically,
    and a cover:"…" on an album line always wins over this list. */
 const SAVED_COVERS = {
+  "Fleshwater — We're Not Here to Be Loved": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/50/6d/02/506d0266-4c1f-93d0-5451-fdcb9d4d4a19/196626707086.jpg/300x300bb.jpg",
   "Acid Bath — When the Kite String Pops": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/fb/3e/93/fb3e9398-ec15-c0f8-a6e3-2c92fc68bcea/888880845054.tif/300x300bb.jpg",
   "Agent Orange — Living in Darkness": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/98/85/56/988556eb-5f73-1a28-f4f8-4cb0bcb11150/859747115269_cover.jpg/300x300bb.jpg",
   "Alex G — Trick": "https://coverartarchive.org/release-group/a1851b11-5c14-497a-af7a-fa04c0946c78/front-250",
@@ -937,15 +1016,24 @@ const SAVED_COVERS = {
     const noCover = () => { cv.style.display = "none"; lb.style.display = "none"; ph.style.display = "flex"; };
     ph.textContent = r.title;
     cv.onerror = noCover;
-    if (src) { cv.style.display = ""; lb.style.display = ""; ph.style.display = "none"; cv.src = src; lb.src = src; }
-    else { cv.removeAttribute("src"); lb.removeAttribute("src"); noCover(); }
-    $("m-vinyl").style.background = "#111";
+    const realLabel = r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null;
+    if (src) { cv.style.display = ""; ph.style.display = "none"; cv.src = src; }
+    else { cv.removeAttribute("src"); noCover(); }
+    const labelSrc = realLabel ? realLabel.img : src;
+    lb.onerror = () => { if (realLabel && src && lb.src !== src) { lb.style.transform = ""; lb.src = src; } else lb.style.display = "none"; };
+    lb.style.transform = realLabel && realLabel.zoom > 1 ? `scale(${realLabel.zoom}) translate(${50 - (realLabel.x ?? 50)}%, ${50 - (realLabel.y ?? 50)}%)` : "";
+    if (labelSrc) { lb.style.display = ""; lb.src = labelSrc; } else { lb.removeAttribute("src"); lb.style.display = "none"; }
+    $("m-record").classList.toggle("reallabel", !!realLabel);
+    const VINYL = {black:"#111", clear:"rgba(236,232,222,.22)", smoke:"rgba(70,68,64,.62)", white:"#ece8e0"};
+    const ownVinyl = r.vinyl ? (VINYL[r.vinyl] || r.vinyl) : null;
+    $("m-vinyl").style.background = ownVinyl || "#111";
+    $("m-disc").classList.toggle("see-through", /clear|smoke/.test(r.vinyl || ""));
     rec.classList.remove("out"); void rec.offsetWidth;
     m.hidden = false; document.body.classList.add("locked");
     setTimeout(() => { if (token === openToken) rec.classList.add("out"); }, 280);
     coverColors(src).then(c => {
       if (token !== openToken || !c) return;
-      $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
+      if (!ownVinyl) $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
       current._colors = c;
       const sw = document.querySelector("#m-info .swatches");
       if (sw) sw.innerHTML = c.map(x => `<i style="background:${x}"></i>`).join("");
