@@ -17,9 +17,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:16px;line-height:1.45;min-height:100vh;overflow-x:hidden}
-/* film grain */
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.06;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1280px;margin:0 auto;padding:0 16px}
 
@@ -57,7 +54,7 @@ nav button.on{color:var(--fg);border-bottom-color:var(--accent)}
 .stats b{color:var(--fg);font-weight:500}
 
 /* letter sections */
-section.letter{padding:36px 0 8px;scroll-margin-top:150px}
+section.letter{padding:36px 0 8px;scroll-margin-top:240px}
 .lhead{display:flex;align-items:flex-end;gap:14px;margin-bottom:18px}
 .lhead .L{font-family:var(--display);font-style:italic;font-weight:500;font-size:104px;line-height:.75;color:var(--accent)}
 .lhead .rule{flex:1;height:5px;border-top:1px solid var(--accent-dim);border-bottom:1px solid var(--accent-dim);margin-bottom:10px}
@@ -67,9 +64,8 @@ section.letter{padding:36px 0 8px;scroll-margin-top:150px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 16px}
 .card{position:relative;cursor:default}
 .cover{position:relative;aspect-ratio:1;background:var(--panel);border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.35);overflow:hidden}
-.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:sepia(.25) saturate(.85) contrast(1.02);transition:opacity .4s, filter .25s, transform .25s}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s}
 .card.loaded .cover img{opacity:1}
-.card:hover .cover img{filter:none;transform:scale(1.03)}
 .ph{position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;
   background:radial-gradient(circle at 30% 25%,#2d2219,#1d160f 70%)}
 .ph .pa{font-family:var(--display);font-style:italic;font-weight:600;font-size:24px;line-height:1;color:var(--accent);word-break:break-word}
@@ -102,6 +98,111 @@ footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;
   .lhead .L{font-size:80px}
   header{padding-top:32px}
 }
+
+/* sort / filter selects */
+.sel{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sel select{background:var(--panel);color:var(--fg);border:1px solid var(--line);font-family:var(--mono);font-size:15px;font-style:italic;padding:7px 10px;outline:none;cursor:pointer}
+.sel select:focus{border-color:var(--accent)}
+.row2{margin-top:10px;justify-content:space-between}
+.row2 .stats{margin-top:0}
+.yr .dot{opacity:.5}
+.yr .genre{font-style:normal;font-size:12px;letter-spacing:.06em}
+.lhead .L.word{font-size:clamp(44px,7vw,72px);line-height:.95}
+.jump.words{flex-wrap:wrap;gap:2px 16px;overflow:visible}
+.jump.words a{flex:none;min-width:0;font-size:15px;padding:2px 0;white-space:nowrap}
+
+/* clickable cards */
+.card{cursor:pointer}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.cover{transition:transform .25s ease, box-shadow .25s ease}
+.card:hover .cover{transform:translateY(-4px);box-shadow:0 12px 22px rgba(40,25,10,.22)}
+
+/* ---------- album popup ---------- */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal[hidden]{display:none}
+.backdrop{position:absolute;inset:0;background:rgba(20,14,9,.72);backdrop-filter:blur(3px);animation:fade .25s ease}
+.sheet{position:relative;width:min(1060px,100%);max-height:calc(100vh - 48px);overflow:auto;background:#fbf8f2;color:#1d1712;
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);box-shadow:0 30px 80px rgba(0,0,0,.5);animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.98)}}
+.x{position:absolute;top:8px;right:12px;z-index:5;background:none;border:0;font-size:34px;line-height:1;color:#76695a;cursor:pointer;font-family:var(--display)}
+.x:hover{color:#1d1712}
+
+.stagecol{background:#1b140e}
+.stage{position:sticky;top:0;height:min(720px,calc(100vh - 48px));display:flex;align-items:center;justify-content:center;padding:48px 28px;
+  background:radial-gradient(circle at 40% 45%,#2a2018,#17110c 75%)}
+.nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;background:rgba(251,248,242,.08);border:1px solid rgba(236,224,198,.18);color:#ece0c6;
+  width:34px;height:34px;font-size:22px;line-height:1;cursor:pointer;font-family:var(--display)}
+.nav:hover{background:rgba(251,248,242,.18)}
+.nav.prev{left:10px}.nav.next{right:10px}
+
+.record{position:relative;width:min(300px,52%);aspect-ratio:1;margin-right:26%}
+.sleeve{position:absolute;inset:0;z-index:2;background:#2d2219;box-shadow:0 18px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04)}
+.sleeve img{width:100%;height:100%;object-fit:cover;display:block}
+.sleeve-ph{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:16px;text-align:center;
+  font-family:var(--display);font-style:italic;font-weight:600;font-size:26px;color:#b8925a}
+.disc{position:absolute;top:3%;left:3%;width:94%;height:94%;z-index:1;transform:translateX(0);transition:transform 1.1s cubic-bezier(.25,.9,.3,1)}
+.record.out .disc{transform:translateX(52%)}
+.spin{position:absolute;inset:0;border-radius:50%;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.record.out .spin{animation:spin 2.4s linear infinite;animation-delay:1s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.vinyl{position:absolute;inset:0;border-radius:50%;background:#111}
+.grooves{position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle at 50% 50%,rgba(0,0,0,.22) 0 1px,rgba(255,255,255,.035) 1px 2px,transparent 2px 3.2px);
+  -webkit-mask:radial-gradient(circle,transparent 0 33%,#000 34% 97%,transparent 97.5%);mask:radial-gradient(circle,transparent 0 33%,#000 34% 97%,transparent 97.5%)}
+.sheen{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 20deg,transparent 0 10%,rgba(255,255,255,.22) 14%,transparent 22% 55%,rgba(255,255,255,.16) 62%,transparent 70%)}
+.label{position:absolute;inset:33%;border-radius:50%;overflow:hidden;background:#c9b48d;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+.label img{width:100%;height:100%;object-fit:cover;display:block}
+.hole{position:absolute;left:50%;top:50%;width:3.2%;height:3.2%;transform:translate(-50%,-50%);border-radius:50%;background:#17110c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+
+.info{padding:40px 36px 36px;font-family:var(--mono);font-size:16px;line-height:1.5}
+.info .k{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#76695a}
+.info h2{font-family:var(--display);font-weight:600;font-size:clamp(32px,4vw,46px);line-height:1.02;margin:6px 0 10px}
+.info .metaline{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.pill{border:1px solid #cdb894;color:#6e5533;font-size:13px;padding:1px 9px;font-style:italic}
+.pill.fav{background:#6e1f24;border-color:#6e1f24;color:#ece0c6;font-style:normal}
+.info h3{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8a6838;
+  margin:24px 0 8px;padding-bottom:6px;border-bottom:1px solid #e4ddd1}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 18px}
+.facts dt{color:#76695a;font-style:italic}
+.facts dd{margin:0}
+.tracks{list-style:none;counter-reset:t;columns:1}
+.tracks li{display:flex;gap:10px;padding:3px 0;border-bottom:1px dotted #e4ddd1;break-inside:avoid}
+.tracks li .n{color:#a08e72;min-width:22px;font-variant-numeric:tabular-nums}
+.tracks li .t{flex:1}
+.tracks li .d{color:#76695a;font-variant-numeric:tabular-nums}
+.tracks .disc-h{color:#8a6838;font-style:italic;border:0;padding-top:8px}
+.pressings{list-style:none}
+.pressings li{padding:6px 0;border-bottom:1px dotted #e4ddd1;font-size:15px}
+.pressings li b{font-weight:500}
+.pressings .psub{color:#76695a;font-style:italic;font-size:14px}
+.swatches{display:flex;gap:6px;margin:4px 0 2px}
+.swatches i{width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.links a{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border:1px solid #cdb894;padding:5px 10px;color:#6e5533}
+.links a:hover{background:#1d1712;color:#fbf8f2;border-color:#1d1712}
+.muted{color:#a08e72;font-style:italic}
+.loading{color:#a08e72;font-style:italic;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+.notes{font-size:17px;line-height:1.6;white-space:pre-wrap}
+.rating{color:#6e1f24;letter-spacing:.1em}
+body.locked{overflow:hidden}
+
+@media (max-width:760px){
+  .modal{padding:0;align-items:stretch}
+  .sheet{grid-template-columns:1fr;max-height:100vh;height:100%}
+  .stage{position:relative;height:auto;padding:42px 16px 30px}
+  .record{width:min(220px,50%);margin-right:24%}
+  .info{padding:24px 20px 40px}
+  .x{color:#ece0c6}
+  .x:hover{color:#fff}
+  .row .sel{flex:1 1 140px}
+  .sel select{flex:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .disc{transition:none}.record.out .spin{animation:none}
+}
 </style>
 </head>
 <body>
@@ -117,180 +218,183 @@ footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;
      fav: true          → ★ favorite
      type: "EP"         → EP / CP (compilation) / BS (b-sides) / GH (greatest hits) / LV (live)
      cover: "https://…" → use your own cover image instead of the auto one
+     genre: "Shoegaze"  → shown under the title; used by the Genre filter and sort
+     notes: "…"         → your thoughts, shown in the album's pop-up
+     rating: 4.5        → stars in the pop-up (out of 5)
    ===================================================================== */
 const RECORDS = [
   // A
-  { artist:"Acid Bath", title:"When the Kite String Pops", year:1994 },
-  { artist:"Agent Orange", title:"Living in Darkness", year:1981 },
-  { artist:"Alex G", title:"Trick", year:2012 },
-  { artist:"Alice In Chains", title:"Facelift", year:1990 },
-  { artist:"Alice In Chains", title:"Dirt", year:1992 },
-  { artist:"Alice In Chains", title:"Jar of Flies", year:1994 },
-  { artist:"Alice In Chains", title:"Alice in Chains", year:1995 },
-  { artist:"Alice In Chains", title:"Black Gives Way to Blue", year:2009 },
-  { artist:"Alice In Chains", title:"The Devil Put Dinosaurs Here", year:2013 },
-  { artist:"Arctic Monkeys", title:"Whatever People Say I Am, That's What I'm Not", year:2006 },
-  { artist:"Arctic Monkeys", title:"Favourite Worst Nightmare", year:2007 },
-  { artist:"Arctic Monkeys", title:"Humbug", year:2009 },
-  { artist:"Arctic Monkeys", title:"Suck It and See", year:2011 },
-  { artist:"Arctic Monkeys", title:"AM", year:2013 },
-  { artist:"Arctic Monkeys", title:"Tranquility Base Hotel & Casino", year:2018 },
-  { artist:"Arctic Monkeys", title:"The Car", year:2022 },
+  { artist:"Acid Bath", title:"When the Kite String Pops", year:1994, genre:"Sludge Metal" },
+  { artist:"Agent Orange", title:"Living in Darkness", year:1981, genre:"Punk" },
+  { artist:"Alex G", title:"Trick", year:2012, genre:"Indie Rock" },
+  { artist:"Alice In Chains", title:"Facelift", year:1990, genre:"Grunge" },
+  { artist:"Alice In Chains", title:"Dirt", year:1992, genre:"Grunge" },
+  { artist:"Alice In Chains", title:"Jar of Flies", year:1994, genre:"Grunge" },
+  { artist:"Alice In Chains", title:"Alice in Chains", year:1995, genre:"Grunge" },
+  { artist:"Alice In Chains", title:"Black Gives Way to Blue", year:2009, genre:"Grunge" },
+  { artist:"Alice In Chains", title:"The Devil Put Dinosaurs Here", year:2013, genre:"Grunge" },
+  { artist:"Arctic Monkeys", title:"Whatever People Say I Am, That's What I'm Not", year:2006, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"Favourite Worst Nightmare", year:2007, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"Humbug", year:2009, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"Suck It and See", year:2011, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"AM", year:2013, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"Tranquility Base Hotel & Casino", year:2018, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"The Car", year:2022, genre:"Indie Rock" },
   // B
-  { artist:"Babes in Toyland", title:"Fontanelle", year:1992 },
-  { artist:"Babes in Toyland", title:"Painkillers", year:1993 },
-  { artist:"The Backseat Lovers", title:"When We Were Friends", year:2019 },
-  { artist:"Bad Brains", title:"Bad Brains", year:1982 },
-  { artist:"Bad Brains", title:"Rock for Light", year:1983 },
-  { artist:"Bad Brains", title:"I Against I", year:1986 },
-  { artist:"The Beatles", title:"Please Please Me", year:1963 },
-  { artist:"The Beatles", title:"With The Beatles", year:1963 },
-  { artist:"The Beatles", title:"A Hard Day's Night", year:1964 },
-  { artist:"The Beatles", title:"Help!", year:1965 },
-  { artist:"The Beatles", title:"Rubber Soul", year:1965 },
-  { artist:"The Beatles", title:"Revolver", year:1966 },
-  { artist:"The Beatles", title:"Sgt. Pepper's Lonely Hearts Club Band", year:1967 },
-  { artist:"The Beatles", title:"Magical Mystery Tour", year:1967 },
-  { artist:"The Beatles", title:"The Beatles", year:1968 },
-  { artist:"The Beatles", title:"Abbey Road", year:1969 },
-  { artist:"The Beatles", title:"Hey Jude", year:1970, type:"CP" },
-  { artist:"The Beatles", title:"Let It Be", year:1970 },
-  { artist:"Billy Joel", title:"The Stranger", year:1977 },
-  { artist:"Björk", title:"Debut", year:1993 },
-  { artist:"Björk", title:"Post", year:1995 },
-  { artist:"Björk", title:"Homogenic", year:1997 },
-  { artist:"Black Country, New Road", title:"For the first time", year:2021 },
-  { artist:"Black Country, New Road", title:"Ants From Up There", year:2022 },
-  { artist:"Black Flag", title:"Nervous Breakdown", year:1979, type:"EP" },
-  { artist:"Black Flag", title:"Damaged", year:1981 },
-  { artist:"Black Flag", title:"Slip It In", year:1984 },
-  { artist:"Black Flag", title:"Loose Nut", year:1985 },
-  { artist:"Black Sabbath", title:"Black Sabbath", year:1970 },
-  { artist:"Black Sabbath", title:"Paranoid", year:1970 },
-  { artist:"Blur", title:"Modern Life Is Rubbish", year:1993 },
-  { artist:"Blur", title:"Parklife", year:1994 },
-  { artist:"Blur", title:"The Great Escape", year:1995 },
-  { artist:"Blur", title:"Blur", year:1997 },
-  { artist:"Blur", title:"13", year:1999 },
-  { artist:"Blur", title:"The Ballad of Darren", year:2023 },
-  { artist:"bôa", title:"Twilight", year:2001 },
-  { artist:"The Breeders", title:"Pod", year:1990 },
-  { artist:"The Breeders", title:"Last Splash", year:1993 },
-  { artist:"Broadcast", title:"Work and Non Work", year:1997 },
-  { artist:"Broadcast", title:"The Noise Made by People", year:2000 },
-  { artist:"Broadcast", title:"Haha Sound", year:2003 },
-  { artist:"Broadcast", title:"Tender Buttons", year:2005 },
-  { artist:"Bush", title:"Sixteen Stone", year:1994 },
-  { artist:"Bush", title:"Razorblade Suitcase", year:1996 },
-  { artist:"Bush", title:"The Science of Things", year:1999 },
+  { artist:"Babes in Toyland", title:"Fontanelle", year:1992, genre:"Grunge" },
+  { artist:"Babes in Toyland", title:"Painkillers", year:1993, genre:"Grunge" },
+  { artist:"The Backseat Lovers", title:"When We Were Friends", year:2019, genre:"Indie Rock" },
+  { artist:"Bad Brains", title:"Bad Brains", year:1982, genre:"Hardcore Punk" },
+  { artist:"Bad Brains", title:"Rock for Light", year:1983, genre:"Hardcore Punk" },
+  { artist:"Bad Brains", title:"I Against I", year:1986, genre:"Hardcore Punk" },
+  { artist:"The Beatles", title:"Please Please Me", year:1963, genre:"Pop Rock" },
+  { artist:"The Beatles", title:"With The Beatles", year:1963, genre:"Pop Rock" },
+  { artist:"The Beatles", title:"A Hard Day's Night", year:1964, genre:"Pop Rock" },
+  { artist:"The Beatles", title:"Help!", year:1965, genre:"Pop Rock" },
+  { artist:"The Beatles", title:"Rubber Soul", year:1965, genre:"Folk Rock" },
+  { artist:"The Beatles", title:"Revolver", year:1966, genre:"Psychedelic Rock" },
+  { artist:"The Beatles", title:"Sgt. Pepper's Lonely Hearts Club Band", year:1967, genre:"Psychedelic Rock" },
+  { artist:"The Beatles", title:"Magical Mystery Tour", year:1967, genre:"Psychedelic Rock" },
+  { artist:"The Beatles", title:"The Beatles", year:1968, genre:"Rock" },
+  { artist:"The Beatles", title:"Abbey Road", year:1969, genre:"Rock" },
+  { artist:"The Beatles", title:"Hey Jude", year:1970, type:"CP", genre:"Rock" },
+  { artist:"The Beatles", title:"Let It Be", year:1970, genre:"Rock" },
+  { artist:"Billy Joel", title:"The Stranger", year:1977, genre:"Pop Rock" },
+  { artist:"Björk", title:"Debut", year:1993, genre:"Art Pop" },
+  { artist:"Björk", title:"Post", year:1995, genre:"Art Pop" },
+  { artist:"Björk", title:"Homogenic", year:1997, genre:"Art Pop" },
+  { artist:"Black Country, New Road", title:"For the first time", year:2021, genre:"Post-Punk" },
+  { artist:"Black Country, New Road", title:"Ants From Up There", year:2022, genre:"Art Rock" },
+  { artist:"Black Flag", title:"Nervous Breakdown", year:1979, type:"EP", genre:"Hardcore Punk" },
+  { artist:"Black Flag", title:"Damaged", year:1981, genre:"Hardcore Punk" },
+  { artist:"Black Flag", title:"Slip It In", year:1984, genre:"Hardcore Punk" },
+  { artist:"Black Flag", title:"Loose Nut", year:1985, genre:"Hardcore Punk" },
+  { artist:"Black Sabbath", title:"Black Sabbath", year:1970, genre:"Heavy Metal" },
+  { artist:"Black Sabbath", title:"Paranoid", year:1970, genre:"Heavy Metal" },
+  { artist:"Blur", title:"Modern Life Is Rubbish", year:1993, genre:"Britpop" },
+  { artist:"Blur", title:"Parklife", year:1994, genre:"Britpop" },
+  { artist:"Blur", title:"The Great Escape", year:1995, genre:"Britpop" },
+  { artist:"Blur", title:"Blur", year:1997, genre:"Alt Rock" },
+  { artist:"Blur", title:"13", year:1999, genre:"Alt Rock" },
+  { artist:"Blur", title:"The Ballad of Darren", year:2023, genre:"Alt Rock" },
+  { artist:"bôa", title:"Twilight", year:2001, genre:"Alt Rock" },
+  { artist:"The Breeders", title:"Pod", year:1990, genre:"Alt Rock" },
+  { artist:"The Breeders", title:"Last Splash", year:1993, genre:"Alt Rock" },
+  { artist:"Broadcast", title:"Work and Non Work", year:1997, genre:"Dream Pop" },
+  { artist:"Broadcast", title:"The Noise Made by People", year:2000, genre:"Dream Pop" },
+  { artist:"Broadcast", title:"Haha Sound", year:2003, genre:"Dream Pop" },
+  { artist:"Broadcast", title:"Tender Buttons", year:2005, genre:"Dream Pop" },
+  { artist:"Bush", title:"Sixteen Stone", year:1994, genre:"Grunge" },
+  { artist:"Bush", title:"Razorblade Suitcase", year:1996, genre:"Grunge" },
+  { artist:"Bush", title:"The Science of Things", year:1999, genre:"Grunge" },
   // C
-  { artist:"Café Tacvba", title:"Café Tacvba", year:1992 },
-  { artist:"Café Tacvba", title:"Re", year:1994 },
-  { artist:"Café Tacvba", title:"Avalancha de éxitos", year:1996 },
-  { artist:"Café Tacvba", title:"Tiempo transcurrido", year:2001, type:"CP" },
-  { artist:"Café Tacvba", title:"Cuatro Caminos", year:2003 },
-  { artist:"Café Tacvba", title:"SINO", year:2007 },
-  { artist:"Cage The Elephant", title:"Cage The Elephant", year:2009 },
-  { artist:"Cage The Elephant", title:"Thank You Happy Birthday", year:2011 },
-  { artist:"Cage The Elephant", title:"Melophobia", year:2013 },
-  { artist:"Cage The Elephant", title:"Tell Me I'm Pretty", year:2015 },
-  { artist:"Cage The Elephant", title:"Social Cues", year:2019 },
-  { artist:"Caifanes", title:"Caifanes", year:1988 },
-  { artist:"Caifanes", title:"El Diablito", year:1990 },
-  { artist:"Caifanes", title:"El Silencio", year:1992 },
-  { artist:"Caifanes", title:"El Nervio del Volcán", year:1994 },
-  { artist:"The Cardigans", title:"First Band on the Moon", year:1996 },
-  { artist:"The Cardigans", title:"Gran Turismo", year:1998 },
-  { artist:"The Cars", title:"The Cars", year:1978 },
-  { artist:"The Cars", title:"Candy-O", year:1979 },
-  { artist:"Car Seat Headrest", title:"Twin Fantasy", year:"2011/2018" },
-  { artist:"Car Seat Headrest", title:"Teens of Denial", year:2016 },
+  { artist:"Café Tacvba", title:"Café Tacvba", year:1992, genre:"Rock en Español" },
+  { artist:"Café Tacvba", title:"Re", year:1994, genre:"Rock en Español" },
+  { artist:"Café Tacvba", title:"Avalancha de éxitos", year:1996, genre:"Rock en Español" },
+  { artist:"Café Tacvba", title:"Tiempo transcurrido", year:2001, type:"CP", genre:"Rock en Español" },
+  { artist:"Café Tacvba", title:"Cuatro Caminos", year:2003, genre:"Rock en Español" },
+  { artist:"Café Tacvba", title:"SINO", year:2007, genre:"Rock en Español" },
+  { artist:"Cage The Elephant", title:"Cage The Elephant", year:2009, genre:"Alt Rock" },
+  { artist:"Cage The Elephant", title:"Thank You Happy Birthday", year:2011, genre:"Alt Rock" },
+  { artist:"Cage The Elephant", title:"Melophobia", year:2013, genre:"Alt Rock" },
+  { artist:"Cage The Elephant", title:"Tell Me I'm Pretty", year:2015, genre:"Alt Rock" },
+  { artist:"Cage The Elephant", title:"Social Cues", year:2019, genre:"Alt Rock" },
+  { artist:"Caifanes", title:"Caifanes", year:1988, genre:"Rock en Español" },
+  { artist:"Caifanes", title:"El Diablito", year:1990, genre:"Rock en Español" },
+  { artist:"Caifanes", title:"El Silencio", year:1992, genre:"Rock en Español" },
+  { artist:"Caifanes", title:"El Nervio del Volcán", year:1994, genre:"Rock en Español" },
+  { artist:"The Cardigans", title:"First Band on the Moon", year:1996, genre:"Indie Pop" },
+  { artist:"The Cardigans", title:"Gran Turismo", year:1998, genre:"Indie Pop" },
+  { artist:"The Cars", title:"The Cars", year:1978, genre:"New Wave" },
+  { artist:"The Cars", title:"Candy-O", year:1979, genre:"New Wave" },
+  { artist:"Car Seat Headrest", title:"Twin Fantasy", year:"2011/2018", genre:"Indie Rock" },
+  { artist:"Car Seat Headrest", title:"Teens of Denial", year:2016, genre:"Indie Rock" },
   { artist:"Catalyst", title:"...", year:2023, type:"EP" },
   { artist:"certain seasons", title:"Align Again", year:2023 },
-  { artist:"Chat Pile", title:"God's Country", year:2022 },
-  { artist:"Chevelle", title:"Wonder What's Next", year:2002 },
-  { artist:"Chevelle", title:"This Type of Thinking (Could Do Us In)", year:2004 },
-  { artist:"Chevelle", title:"Sci-Fi Crimes", year:2009 },
-  { artist:"Chevelle", title:"Hats Off to the Bull", year:2011 },
-  { artist:"The Clash", title:"London Calling", year:1979 },
-  { artist:"Cocteau Twins", title:"The Moon and the Melodies", year:1986 },
-  { artist:"Cocteau Twins", title:"Heaven or Las Vegas", year:1990 },
-  { artist:"Cocteau Twins", title:"Milk & Kisses", year:1996 },
-  { artist:"Converge", title:"Jane Doe", year:2001 },
-  { artist:"Converge", title:"Petition the Empty Sky", year:2005 },
-  { artist:"Converge", title:"The Dusk in Us", year:2017 },
-  { artist:"Converge", title:"Love Is Not Enough", year:2026 },
-  { artist:"The Cranberries", title:"Everybody Else Is Doing It, So Why Can't We?", year:1993 },
-  { artist:"The Cranberries", title:"No Need to Argue", year:1994 },
-  { artist:"The Cranberries", title:"Bury the Hatchet", year:1999 },
-  { artist:"Crowbar", title:"Odd Fellows Rest", year:2003 },
-  { artist:"Crowbar", title:"Sonic Excess in Its Purest Form", year:2003 },
-  { artist:"Crowbar", title:"Broken Glass", year:2006 },
-  { artist:"Crowbar", title:"Crowbar", year:2010 },
-  { artist:"Crowbar", title:"Time Heals Nothing", year:2010 },
-  { artist:"Crystal Castles", title:"Crystal Castles", year:2008 },
-  { artist:"The Cure", title:"Three Imaginary Boys", year:1979 },
-  { artist:"The Cure", title:"Seventeen Seconds", year:1980 },
-  { artist:"The Cure", title:"Pornography", year:1982 },
-  { artist:"The Cure", title:"The Head on the Door", year:1985 },
-  { artist:"The Cure", title:"Kiss Me Kiss Me Kiss Me", year:1987 },
-  { artist:"The Cure", title:"Disintegration", year:1989 },
-  { artist:"The Cure", title:"Wish", year:1992 },
-  { artist:"The Cure", title:"Bloodflowers", year:2000 },
-  { artist:"The Cure", title:"The Cure", year:2004 },
-  { artist:"The Cure", title:"4:13 Dream", year:2008 },
+  { artist:"Chat Pile", title:"God's Country", year:2022, genre:"Noise Rock" },
+  { artist:"Chevelle", title:"Wonder What's Next", year:2002, genre:"Alt Metal" },
+  { artist:"Chevelle", title:"This Type of Thinking (Could Do Us In)", year:2004, genre:"Alt Metal" },
+  { artist:"Chevelle", title:"Sci-Fi Crimes", year:2009, genre:"Alt Metal" },
+  { artist:"Chevelle", title:"Hats Off to the Bull", year:2011, genre:"Alt Metal" },
+  { artist:"The Clash", title:"London Calling", year:1979, genre:"Punk" },
+  { artist:"Cocteau Twins", title:"The Moon and the Melodies", year:1986, genre:"Dream Pop" },
+  { artist:"Cocteau Twins", title:"Heaven or Las Vegas", year:1990, genre:"Dream Pop" },
+  { artist:"Cocteau Twins", title:"Milk & Kisses", year:1996, genre:"Dream Pop" },
+  { artist:"Converge", title:"Jane Doe", year:2001, genre:"Metalcore" },
+  { artist:"Converge", title:"Petitioning the Empty Sky", year:2005, genre:"Metalcore" },
+  { artist:"Converge", title:"The Dusk in Us", year:2017, genre:"Metalcore" },
+  { artist:"Converge", title:"Love Is Not Enough", year:2026, genre:"Metalcore" },
+  { artist:"The Cranberries", title:"Everybody Else Is Doing It, So Why Can't We?", year:1993, genre:"Alt Rock" },
+  { artist:"The Cranberries", title:"No Need to Argue", year:1994, genre:"Alt Rock" },
+  { artist:"The Cranberries", title:"Bury the Hatchet", year:1999, genre:"Alt Rock" },
+  { artist:"Crowbar", title:"Odd Fellows Rest", year:2003, genre:"Sludge Metal" },
+  { artist:"Crowbar", title:"Sonic Excess in Its Purest Form", year:2003, genre:"Sludge Metal" },
+  { artist:"Crowbar", title:"Broken Glass", year:2006, genre:"Sludge Metal" },
+  { artist:"Crowbar", title:"Crowbar", year:2010, genre:"Sludge Metal" },
+  { artist:"Crowbar", title:"Time Heals Nothing", year:2010, genre:"Sludge Metal" },
+  { artist:"Crystal Castles", title:"Crystal Castles", year:2008, genre:"Electronic" },
+  { artist:"The Cure", title:"Three Imaginary Boys", year:1979, genre:"Post-Punk" },
+  { artist:"The Cure", title:"Seventeen Seconds", year:1980, genre:"Post-Punk" },
+  { artist:"The Cure", title:"Pornography", year:1982, genre:"Gothic Rock" },
+  { artist:"The Cure", title:"The Head on the Door", year:1985, genre:"New Wave" },
+  { artist:"The Cure", title:"Kiss Me Kiss Me Kiss Me", year:1987, genre:"New Wave" },
+  { artist:"The Cure", title:"Disintegration", year:1989, genre:"Gothic Rock" },
+  { artist:"The Cure", title:"Wish", year:1992, genre:"Alt Rock" },
+  { artist:"The Cure", title:"Bloodflowers", year:2000, genre:"Gothic Rock" },
+  { artist:"The Cure", title:"The Cure", year:2004, genre:"Alt Rock" },
+  { artist:"The Cure", title:"4:13 Dream", year:2008, genre:"Alt Rock" },
   // D
-  { artist:"Deftones", title:"Adrenaline", year:1995, fav:true },
-  { artist:"Deftones", title:"Around the Fur", year:1997 },
-  { artist:"Deftones", title:"White Pony", year:2000 },
-  { artist:"Deftones", title:"Deftones", year:2003 },
-  { artist:"Deftones", title:"Saturday Night Wrist", year:2006 },
-  { artist:"Deftones", title:"Diamond Eyes", year:2010 },
-  { artist:"Deftones", title:"Koi No Yokan", year:2012 },
-  { artist:"Dinosaur Jr.", title:"You're Living All Over Me", year:1987 },
-  { artist:"Dinosaur Jr.", title:"Without a Sound", year:1994 },
-  { artist:"Duster", title:"Stratosphere", year:1998 },
-  { artist:"Duster", title:"Duster", year:2019 },
-  { artist:"Duster", title:"Together", year:2022 },
+  { artist:"Deftones", title:"Adrenaline", year:1995, fav:true, genre:"Nu Metal" },
+  { artist:"Deftones", title:"Around the Fur", year:1997, genre:"Nu Metal" },
+  { artist:"Deftones", title:"White Pony", year:2000, genre:"Alt Metal" },
+  { artist:"Deftones", title:"Deftones", year:2003, genre:"Alt Metal" },
+  { artist:"Deftones", title:"Saturday Night Wrist", year:2006, genre:"Alt Metal" },
+  { artist:"Deftones", title:"Diamond Eyes", year:2010, genre:"Alt Metal" },
+  { artist:"Deftones", title:"Koi No Yokan", year:2012, genre:"Alt Metal" },
+  { artist:"Dinosaur Jr.", title:"You're Living All Over Me", year:1987, genre:"Alt Rock" },
+  { artist:"Dinosaur Jr.", title:"Without a Sound", year:1994, genre:"Alt Rock" },
+  { artist:"Duster", title:"Stratosphere", year:1998, genre:"Slowcore" },
+  { artist:"Duster", title:"Duster", year:2019, genre:"Slowcore" },
+  { artist:"Duster", title:"Together", year:2022, genre:"Slowcore" },
   // G
-  { artist:"The Garden", title:"haha", year:2015 },
-  { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018 },
-  { artist:"The Garden", title:"Kiss My Super Bowl Ring", year:2020 },
-  { artist:"The Garden", title:"HORSESHIT ON ROUTE 66", year:2022 },
+  { artist:"The Garden", title:"haha", year:2015, genre:"Punk" },
+  { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018, genre:"Punk" },
+  { artist:"The Garden", title:"Kiss My Super Bowl Ring", year:2020, genre:"Punk" },
+  { artist:"The Garden", title:"HORSESHIT ON ROUTE 66", year:2022, genre:"Punk" },
   // H
-  { artist:"Hole", title:"Celebrity Skin", year:1998, fav:true },
+  { artist:"Hole", title:"Celebrity Skin", year:1998, fav:true, genre:"Alt Rock" },
   // K
-  { artist:"Korn", title:"Korn", year:1994, fav:true },
-  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true },
-  { artist:"Korn", title:"Follow the Leader", year:1998, fav:true },
-  { artist:"Korn", title:"Issues", year:1999 },
-  { artist:"Korn", title:"Untouchables", year:2002 },
-  { artist:"Korn", title:"Take a Look in the Mirror", year:2003 },
-  { artist:"Korn", title:"See You on the Other Side", year:2005 },
+  { artist:"Korn", title:"Korn", year:1994, fav:true, genre:"Nu Metal" },
+  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true, genre:"Nu Metal" },
+  { artist:"Korn", title:"Follow the Leader", year:1998, fav:true, genre:"Nu Metal" },
+  { artist:"Korn", title:"Issues", year:1999, genre:"Nu Metal" },
+  { artist:"Korn", title:"Untouchables", year:2002, genre:"Nu Metal" },
+  { artist:"Korn", title:"Take a Look in the Mirror", year:2003, genre:"Nu Metal" },
+  { artist:"Korn", title:"See You on the Other Side", year:2005, genre:"Nu Metal" },
   // M
-  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, fav:true },
-  { artist:"My Bloody Valentine", title:"Loveless", year:1991, fav:true },
-  { artist:"My Bloody Valentine", title:"m b v", year:2013 },
+  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, fav:true, genre:"Shoegaze" },
+  { artist:"My Bloody Valentine", title:"Loveless", year:1991, fav:true, genre:"Shoegaze" },
+  { artist:"My Bloody Valentine", title:"m b v", year:2013, genre:"Shoegaze" },
   // P
-  { artist:"A Perfect Circle", title:"Mer de Noms", year:2000 },
-  { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, fav:true },
+  { artist:"A Perfect Circle", title:"Mer de Noms", year:2000, genre:"Alt Metal" },
+  { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, fav:true, genre:"Alt Metal" },
   // R
-  { artist:"Radiohead", title:"Pablo Honey", year:1993 },
-  { artist:"Radiohead", title:"The Bends", year:1995 },
-  { artist:"Radiohead", title:"OK Computer", year:1997 },
-  { artist:"Radiohead", title:"Kid A", year:2000 },
-  { artist:"Radiohead", title:"Amnesiac", year:2001 },
-  { artist:"Radiohead", title:"Hail to the Thief", year:2003 },
-  { artist:"Radiohead", title:"In Rainbows", year:2007 },
+  { artist:"Radiohead", title:"Pablo Honey", year:1993, genre:"Alt Rock" },
+  { artist:"Radiohead", title:"The Bends", year:1995, genre:"Alt Rock" },
+  { artist:"Radiohead", title:"OK Computer", year:1997, genre:"Art Rock" },
+  { artist:"Radiohead", title:"Kid A", year:2000, genre:"Art Rock" },
+  { artist:"Radiohead", title:"Amnesiac", year:2001, genre:"Art Rock" },
+  { artist:"Radiohead", title:"Hail to the Thief", year:2003, genre:"Art Rock" },
+  { artist:"Radiohead", title:"In Rainbows", year:2007, genre:"Art Rock" },
   // S
-  { artist:"The Smashing Pumpkins", title:"Siamese Dream", year:1993 },
-  { artist:"The Smashing Pumpkins", title:"Mellon Collie and the Infinite Sadness", year:1995 },
-  { artist:"Sonic Youth", title:"Daydream Nation", year:1988 },
-  { artist:"Sonic Youth", title:"Goo", year:1990 },
-  { artist:"Sonic Youth", title:"Dirty", year:1992 },
-  { artist:"Sonic Youth", title:"Washing Machine", year:1995 },
-  { artist:"Sonic Youth", title:"A Thousand Leaves", year:1998 },
-  { artist:"Sonic Youth", title:"Rather Ripped", year:2006 },
+  { artist:"The Smashing Pumpkins", title:"Siamese Dream", year:1993, genre:"Alt Rock" },
+  { artist:"The Smashing Pumpkins", title:"Mellon Collie and the Infinite Sadness", year:1995, genre:"Alt Rock" },
+  { artist:"Sonic Youth", title:"Daydream Nation", year:1988, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"Goo", year:1990, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"Dirty", year:1992, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"Washing Machine", year:1995, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"A Thousand Leaves", year:1998, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"Rather Ripped", year:2006, genre:"Noise Rock" },
 ];
 
 /* Bands you still want to add — one name per line */
@@ -299,6 +403,172 @@ const QUEUE = [
   "Bauhaus","Basement","Bikini Kill","The Blood Brothers",
   "Ceremony","Cheap Trick",
 ];
+
+/* Saved cover links, so the site doesn't have to look them up.
+   You never need to edit this. New albums get looked up automatically,
+   and a cover:"…" on an album line always wins over this list. */
+const SAVED_COVERS = {
+  "Acid Bath — When the Kite String Pops": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/fb/3e/93/fb3e9398-ec15-c0f8-a6e3-2c92fc68bcea/888880845054.tif/300x300bb.jpg",
+  "Agent Orange — Living in Darkness": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/98/85/56/988556eb-5f73-1a28-f4f8-4cb0bcb11150/859747115269_cover.jpg/300x300bb.jpg",
+  "Alex G — Trick": "https://coverartarchive.org/release-group/a1851b11-5c14-497a-af7a-fa04c0946c78/front-250",
+  "Alice In Chains — Facelift": "https://coverartarchive.org/release-group/7d026b9c-9159-34b5-a40d-14f134718394/front-250",
+  "Alice In Chains — Dirt": "https://coverartarchive.org/release-group/92d8f0c4-8c64-3bee-bee1-812a70e77efa/front-250",
+  "Alice In Chains — Jar of Flies": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/bd/d6/37/bdd6373e-dc26-e86e-1d31-9bb1f7656968/5099747485527.jpg/300x300bb.jpg",
+  "Alice In Chains — Alice in Chains": "https://coverartarchive.org/release-group/5918ad2b-91e7-4edd-b8e9-dfb57afa0f80/front-250",
+  "Alice In Chains — Black Gives Way to Blue": "https://coverartarchive.org/release-group/5bf55ee1-5074-4fbe-9cce-fde92e9161cf/front-250",
+  "Alice In Chains — The Devil Put Dinosaurs Here": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1c/eb/ba/1cebba07-dead-6376-3277-a2dd20bf0640/24CRGIM42068.rgb.jpg/300x300bb.jpg",
+  "Arctic Monkeys — Whatever People Say I Am, That's What I'm Not": "https://coverartarchive.org/release-group/6c9c4985-3628-3070-b956-b538f30c9bea/front-250",
+  "Arctic Monkeys — Favourite Worst Nightmare": "https://coverartarchive.org/release-group/f113fa38-7908-3ec9-8145-d2455e78a8b2/front-250",
+  "Arctic Monkeys — Humbug": "https://coverartarchive.org/release-group/23b7e9e9-8820-4a49-b44f-a7a60e0a7e81/front-250",
+  "Arctic Monkeys — Suck It and See": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/23/e1/c1/23e1c159-654d-1c66-f0cf-e4ca6bc9932d/mzi.kfuzglya.jpg/300x300bb.jpg",
+  "Arctic Monkeys — AM": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/69/9c/b5/699cb5d6-115c-ff73-9d26-e57ea4350d72/887828031795.png/300x300bb.jpg",
+  "Arctic Monkeys — Tranquility Base Hotel & Casino": "https://coverartarchive.org/release-group/97ee3a0f-183b-4830-aa5c-45507a084d37/front-250",
+  "Arctic Monkeys — The Car": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/44/8e/cf/448ecfff-7f7d-286c-8a4a-b631eeeefedb/887828045563.png/300x300bb.jpg",
+  "Babes in Toyland — Fontanelle": "https://coverartarchive.org/release-group/effc8fd7-7dd2-3458-ac77-734fa22e54bb/front-250",
+  "Babes in Toyland — Painkillers": "https://is1-ssl.mzstatic.com/image/thumb/Features114/v4/1b/f2/c7/1bf2c74b-6e9c-1eb4-9580-d2a20adc7e40/dj.yumrlrwl.jpg/300x300bb.jpg",
+  "The Backseat Lovers — When We Were Friends": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/63/b1/74/63b174eb-845d-7ad1-dd2e-24d8e60fdeaa/193428577343_cover.jpg/300x300bb.jpg",
+  "Bad Brains — Bad Brains": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/4f/96/31/4f963157-6ddd-c258-a9d1-f6d45f27fc92/4047179900126_cover.jpg/300x300bb.jpg",
+  "Bad Brains — Rock for Light": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/d3/3a/98/d33a9862-192f-100a-a1bf-ccc5e7ffe5dd/artwork.jpg/300x300bb.jpg",
+  "Bad Brains — I Against I": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/54/34/c7/5434c767-f36d-7ca9-d0f2-60d13f01e777/artwork.jpg/300x300bb.jpg",
+  "The Beatles — Please Please Me": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/9c/ff/b5/9cffb5a6-a37f-c84a-7240-0333a071bc92/00602567725275.rgb.jpg/300x300bb.jpg",
+  "The Beatles — With The Beatles": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/03/02/d2/0302d204-77c1-0c87-e03a-698bd31cf038/00602567725619.rgb.jpg/300x300bb.jpg",
+  "The Beatles — A Hard Day's Night": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/db/a2/7a/dba27a46-3685-508d-d32e-a0e73cc82251/00602567713296.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Help!": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/1a/19/db/1a19db26-17ad-b986-11a9-f72ac7a6194b/18UMGIM31214.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Rubber Soul": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/af/20/aa/af20aa89-4002-11fb-25d8-ff544af67eb4/00602567725404.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Revolver": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/58/4a/10/584a1058-de0a-6a6b-d0bd-da09a028b8bc/00602567705499.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Sgt. Pepper's Lonely Hearts Club Band": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/6f/79/8d/6f798d84-7475-8525-fc91-f7b51b2b5a9b/00602567725428.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Magical Mystery Tour": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/43/0e/37/430e3790-75d5-c96a-1380-f9d9803aa700/18UMGIM31245.rgb.jpg/300x300bb.jpg",
+  "The Beatles — The Beatles": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/fa/5b/89/fa5b898d-bad6-e053-4195-260e5c74f2bb/00602567725466.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Abbey Road": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/48/53/43/485343e3-dd6a-0034-faec-f4b6403f8108/13UMGIM63890.rgb.jpg/300x300bb.jpg",
+  "The Beatles — Hey Jude": "https://coverartarchive.org/release-group/4a05547f-0eb3-3eba-9e01-a9d440d4d041/front-250",
+  "The Beatles — Let It Be": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ae/98/4c/ae984c7a-cd06-a7cd-e8bf-32cb15ba698d/00602567705475.rgb.jpg/300x300bb.jpg",
+  "Billy Joel — The Stranger": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/37/68/4c/37684c52-dbdf-9bfe-0d87-07492f43dc4c/dj.gmcbwich.jpg/300x300bb.jpg",
+  "Björk — Debut": "https://coverartarchive.org/release-group/6891a28c-5865-36e2-9e5f-c9fac1d3595f/front-250",
+  "Björk — Post": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/69/62/1c/69621c9a-514f-00cf-1de6-6e49f004fb28/075596174060.jpg/300x300bb.jpg",
+  "Björk — Homogenic": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/12/38/d0/1238d076-0a43-5758-1876-5ab6d256d648/5016958995157.png/300x300bb.jpg",
+  "Black Country, New Road — For the first time": "https://coverartarchive.org/release-group/968b13bb-026b-410e-831e-a7bb7418ea60/front-250",
+  "Black Country, New Road — Ants From Up There": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/8f/6a/c6/8f6ac6c6-5bcd-fa25-94f2-fd9922725215/5054429151442.png/300x300bb.jpg",
+  "Black Flag — Nervous Breakdown": "https://coverartarchive.org/release-group/db01619d-f228-3f17-8205-2b63e11d6493/front-250",
+  "Black Flag — Damaged": "https://coverartarchive.org/release-group/2cf40300-0f67-3136-9b84-57104f1f7a50/front-250",
+  "Black Flag — Slip It In": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/36/a2/11/36a21119-6aad-166e-1471-217f28e48bd4/669910742853.jpg/300x300bb.jpg",
+  "Black Flag — Loose Nut": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/4c/63/8b/4c638b72-3fe2-1c02-7c95-4ee9f95219e6/669910743751.jpg/300x300bb.jpg",
+  "Black Sabbath — Black Sabbath": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/62/8a/3d/628a3dc3-c862-8641-6306-64d7e7e8960a/075992718523.jpg/300x300bb.jpg",
+  "Black Sabbath — Paranoid": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/be/27/91/be279120-2285-16c6-c7ba-9d6643d4a948/075992732727.jpg/300x300bb.jpg",
+  "Blur — Modern Life Is Rubbish": "https://is1-ssl.mzstatic.com/image/thumb/Features4/v4/a8/ce/95/a8ce95da-fbdc-a414-5c10-cf46bfed2ae9/dj.gohhigri.jpg/300x300bb.jpg",
+  "Blur — Parklife": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/8a/71/66/8a71664b-3baa-537b-e008-b32d86da27bc/5099997227755.jpg/300x300bb.jpg",
+  "Blur — The Great Escape": "https://is1-ssl.mzstatic.com/image/thumb/Features114/v4/69/66/bc/6966bc86-c612-616d-0cf2-dd75de9da894/dj.prdjibis.jpg/300x300bb.jpg",
+  "Blur — Blur": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/20/b0/2d/20b02d2c-4ffc-8f4c-40ae-30f2dadf04f6/5099997262459.jpg/300x300bb.jpg",
+  "Blur — 13": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/9a/5d/8f/9a5d8f6d-a570-84b7-321f-315e4d97a127/5099997227151.jpg/300x300bb.jpg",
+  "Blur — The Ballad of Darren": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/48/f6/1a/48f61a3b-9987-a6b9-98e5-8f947fd1c33e/5054197755040.jpg/300x300bb.jpg",
+  "bôa — Twilight": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/45/44/15/45441528-0288-eedc-f6fc-93137b8cfe96/067003248969.png/300x300bb.jpg",
+  "The Breeders — Pod": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/f5/ed/dc/f5eddc58-8754-b6e6-0304-bae14406418b/652637000665.png/300x300bb.jpg",
+  "The Breeders — Last Splash": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c7/f2/9c/c7f29c36-434e-3e40-b517-dce503eb2d5c/652637301458.png/300x300bb.jpg",
+  "Broadcast — Work and Non Work": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/78/9c/e2/789ce209-769b-0e3b-4826-abbb4618e6ab/0801061005238.jpg/300x300bb.jpg",
+  "Broadcast — The Noise Made by People": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/20/b4/9f/20b49faf-2f6b-53a1-6747-9496f6841fd3/mzi.jskzhdnu.jpg/300x300bb.jpg",
+  "Broadcast — Haha Sound": "https://is1-ssl.mzstatic.com/image/thumb/Music/d2/4e/7c/mzi.spwubhum.jpg/300x300bb.jpg",
+  "Broadcast — Tender Buttons": "https://is1-ssl.mzstatic.com/image/thumb/Music/51/f4/91/mzi.gcqyntqr.jpg/300x300bb.jpg",
+  "Bush — Sixteen Stone": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ad/10/83/ad1083d4-6a79-8f5e-aad5-665a58df2615/17UMGIM79375.rgb.jpg/300x300bb.jpg",
+  "Bush — Razorblade Suitcase": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/72/a0/3c/72a03c16-bf12-7e91-fc46-e5c3ff2c219b/00602557393521.rgb.jpg/300x300bb.jpg",
+  "Bush — The Science of Things": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/69/90/a3/6990a3bc-d707-5530-0509-8c18fb2e8b2f/00886444857758.rgb.jpg/300x300bb.jpg",
+  "Café Tacvba — Café Tacvba": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/b8/05/e0/b805e0c5-01ba-8877-0603-e592febac503/s06.edvrmaoh.jpg/300x300bb.jpg",
+  "Café Tacvba — Re": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2d/95/95/2d959591-9063-f01e-da83-b02d8d6a8651/s06.bsbqejds.jpg/300x300bb.jpg",
+  "Café Tacvba — Avalancha de éxitos": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/18/f8/4f/18f84f4a-83c7-7678-823a-78f18e66229b/mzi.mqhumwvv.jpg/300x300bb.jpg",
+  "Café Tacvba — Tiempo transcurrido": "https://is1-ssl.mzstatic.com/image/thumb/Features/v4/83/16/1d/83161d06-91aa-c4a4-e47e-7a7d9cc15d80/dj.usrmjfgz.jpg/300x300bb.jpg",
+  "Café Tacvba — Cuatro Caminos": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c0/82/4e/c0824e1f-1c08-93d1-2377-8b8d13c64242/06UMGIM10078.rgb.jpg/300x300bb.jpg",
+  "Café Tacvba — SINO": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/9a/91/d2/9a91d2bb-a8aa-f0a4-6ce9-5aedb20c9deb/00602517469563.rgb.jpg/300x300bb.jpg",
+  "Cage The Elephant — Cage The Elephant": "https://coverartarchive.org/release-group/fbd0f91f-e5a3-3fef-8363-663ec65ce1ff/front-250",
+  "Cage The Elephant — Thank You Happy Birthday": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f6/3e/45/f63e4525-294b-55e0-fef6-6e658320711f/884977984293.jpg/300x300bb.jpg",
+  "Cage The Elephant — Melophobia": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/02/d2/e2/02d2e290-82c9-bcf4-73fa-4cd06f65f4b9/886444143073.jpg/300x300bb.jpg",
+  "Cage The Elephant — Tell Me I'm Pretty": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/24/12/c0/2412c0e6-4ba6-5f95-12f6-c932daeb6773/886445478310.jpg/300x300bb.jpg",
+  "Cage The Elephant — Social Cues": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e9/31/cc/e931cc5a-e541-5348-b601-1a3053474acb/886447488812.jpg/300x300bb.jpg",
+  "Caifanes — Caifanes": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/b5/5b/ce/b55bce7b-452e-74e2-e5e3-622cea2942ba/dj.ulbhshuf.jpg/300x300bb.jpg",
+  "Caifanes — El Diablito": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/20/78/c8/2078c816-50e7-9692-71cb-342f16776e65/mzi.hwsxlton.jpg/300x300bb.jpg",
+  "Caifanes — El Silencio": "https://is1-ssl.mzstatic.com/image/thumb/Music/58/15/22/mzi.bncioayq.jpg/300x300bb.jpg",
+  "Caifanes — El Nervio del Volcán": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/a9/d2/d2/a9d2d2cd-1be4-f8b0-574d-cd994aedd277/dj.yduzfbus.jpg/300x300bb.jpg",
+  "The Cardigans — First Band on the Moon": "https://coverartarchive.org/release-group/33a35fc0-1126-30c2-a046-b2803116f882/front-250",
+  "The Cardigans — Gran Turismo": "https://coverartarchive.org/release-group/80f8c2b9-c92a-32bf-a267-6119bc80f513/front-250",
+  "The Cars — The Cars": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6b/3c/1d/6b3c1d3e-46a3-d0ac-e386-c2e60c8c8f49/mzm.hdqcumzx.jpg/300x300bb.jpg",
+  "The Cars — Candy-O": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e0/25/6a/e0256a45-7361-261c-6af2-ca712d68ae1b/603497879090.jpg/300x300bb.jpg",
+  "Car Seat Headrest — Twin Fantasy": "https://coverartarchive.org/release-group/354c8fd7-c076-494b-9979-dcc17bc5af80/front-250",
+  "Car Seat Headrest — Teens of Denial": "https://coverartarchive.org/release-group/7413db7e-163c-4e48-bd8e-c41fd466b2c1/front-250",
+  "Catalyst — ...": "https://coverartarchive.org/release-group/b45d0cd9-b711-4ac1-8ad1-f86c229c3d98/front-250",
+  "Chat Pile — God's Country": "https://coverartarchive.org/release-group/dc5482e8-24e5-4f23-b982-3070060f22ae/front-250",
+  "Chevelle — Wonder What's Next": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/5e/a4/00/5ea400c9-fba3-f453-c6b0-8572752263f8/mzi.jubchflz.jpg/300x300bb.jpg",
+  "Chevelle — This Type of Thinking (Could Do Us In)": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/35/74/5f/35745f9d-8a40-0cb4-6fc9-c139dafd5d9b/696998690820.jpg/300x300bb.jpg",
+  "Chevelle — Sci-Fi Crimes": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2c/2a/db/2c2adbc7-a9a0-308c-063c-f4a78ebdb829/888880811981.jpg/300x300bb.jpg",
+  "Chevelle — Hats Off to the Bull": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/9f/9f/32/9f9f328d-3ab2-6aee-3aea-d61fd837e86a/886443249912.jpg/300x300bb.jpg",
+  "The Clash — London Calling": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/93/cb/20/93cb201b-154b-7b74-a10b-48fbef9b3281/888880348937.jpg/300x300bb.jpg",
+  "Cocteau Twins — The Moon and the Melodies": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/20/96/39/2096390c-a094-aecb-1f54-e093d680b16c/652637061185.png/300x300bb.jpg",
+  "Cocteau Twins — Heaven or Las Vegas": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/76/cd/61/76cd61e7-0714-dce5-c48e-0f05f8fcb84b/652637001280.png/300x300bb.jpg",
+  "Cocteau Twins — Milk & Kisses": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/f4/08/22/f40822b5-df76-02d3-09cb-fcf6cde589c6/191400071568.png/300x300bb.jpg",
+  "Converge — Jane Doe": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/8d/73/a9/8d73a92a-8383-b03c-acaa-f232cf09cf18/888880843210.jpg/300x300bb.jpg",
+  "Converge — The Dusk in Us": "https://coverartarchive.org/release-group/fe96f1f4-5c9f-4a39-a9d1-181dd3f4c54b/front-250",
+  "Converge — Love Is Not Enough": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/30/c0/d2/30c0d2e8-c0b8-ee61-bcc4-b29809b67fd2/0045778813568.png/300x300bb.jpg",
+  "The Cranberries — Everybody Else Is Doing It, So Why Can't We?": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/5c/cb/18/5ccb18f7-ab44-3478-cf33-7953837907d2/18UMGIM43740.rgb.jpg/300x300bb.jpg",
+  "The Cranberries — No Need to Argue": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a3/77/a3/a377a309-8e52-f787-2250-2b34d320bf7b/25UMGIM64146.rgb.jpg/300x300bb.jpg",
+  "The Cranberries — Bury the Hatchet": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/aa/df/6f/aadf6f21-49e4-64e5-da92-58a71fa7e28d/06UMGIM03109.rgb.jpg/300x300bb.jpg",
+  "Crowbar — Odd Fellows Rest": "https://is1-ssl.mzstatic.com/image/thumb/Music/51/d2/3c/mzi.hpopgmkf.jpg/300x300bb.jpg",
+  "Crowbar — Sonic Excess in Its Purest Form": "https://is1-ssl.mzstatic.com/image/thumb/Music/8e/5f/fd/mzi.bmcfimqf.jpg/300x300bb.jpg",
+  "Crowbar — Broken Glass": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/71/5f/71/715f7179-1595-9785-009e-1420ddbcf3e0/5400863127121_cover.jpg/300x300bb.jpg",
+  "Crowbar — Crowbar": "https://is1-ssl.mzstatic.com/image/thumb/Music/51/64/03/mzi.jcztppik.jpg/300x300bb.jpg",
+  "Crowbar — Time Heals Nothing": "https://is1-ssl.mzstatic.com/image/thumb/Music/6a/4f/de/mzi.yrnwqjfl.jpg/300x300bb.jpg",
+  "Crystal Castles — Crystal Castles": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/98/5b/ab/985bab9b-9491-c661-5d1e-d337d059287e/5400863128463_cover.jpg/300x300bb.jpg",
+  "The Cure — Three Imaginary Boys": "https://is1-ssl.mzstatic.com/image/thumb/Music/ad/b8/9c/mzi.npcdlmxc.jpg/300x300bb.jpg",
+  "The Cure — Seventeen Seconds": "https://is1-ssl.mzstatic.com/image/thumb/Music/95/f8/89/mzi.lzqbugyp.jpg/300x300bb.jpg",
+  "The Cure — Pornography": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/94/b1/e6/94b1e60c-def9-5e6a-7fc7-7a64aba53f7d/mzi.opremixd.jpg/300x300bb.jpg",
+  "The Cure — The Head on the Door": "https://is1-ssl.mzstatic.com/image/thumb/Music/96/38/e4/mzi.rzvphnxn.jpg/300x300bb.jpg",
+  "The Cure — Kiss Me Kiss Me Kiss Me": "https://coverartarchive.org/release-group/ab132c83-097a-33f0-b557-edd6b6ce1c7d/front-250",
+  "The Cure — Disintegration": "https://is1-ssl.mzstatic.com/image/thumb/Music/93/3c/2c/mzi.ujtdsknz.jpg/300x300bb.jpg",
+  "The Cure — Wish": "https://coverartarchive.org/release-group/88154914-4f14-355c-8066-b3cecd38c42c/front-250",
+  "The Cure — Bloodflowers": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/41/c0/89/41c08977-663e-20df-ad8c-7966e94b9714/mzi.akxastzt.jpg/300x300bb.jpg",
+  "The Cure — The Cure": "https://coverartarchive.org/release-group/7f3826f6-63ea-3cfd-a441-c7837147e2f2/front-250",
+  "The Cure — 4:13 Dream": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/70/49/26/70492678-c1c3-ae44-0026-1450e894cfe7/00602517913615.rgb.jpg/300x300bb.jpg",
+  "Deftones — Adrenaline": "https://coverartarchive.org/release-group/0b4ea447-444c-34ba-ba87-96496f2e15b8/front-250",
+  "Deftones — White Pony": "https://coverartarchive.org/release-group/a7d33e96-8e09-3aff-8629-44812a1b8489/front-250",
+  "Deftones — Deftones": "https://coverartarchive.org/release-group/3df608ab-1e44-4dd8-90e2-a5378ffc440c/front-250",
+  "Deftones — Saturday Night Wrist": "https://is1-ssl.mzstatic.com/image/thumb/Music/14/fb/a8/mzi.fyjrjjzn.jpg/300x300bb.jpg",
+  "Deftones — Diamond Eyes": "https://is1-ssl.mzstatic.com/image/thumb/Features/f4/08/99/dj.wmscwyhw.jpg/300x300bb.jpg",
+  "Deftones — Koi No Yokan": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0d/f4/b7/0df4b710-c9a0-b33a-ee24-dba408a32354/093624946472.jpg/300x300bb.jpg",
+  "Dinosaur Jr. — You're Living All Over Me": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/9c/73/59/9c73597a-d4fd-6726-4524-ad87333fe2b9/cover.jpg/300x300bb.jpg",
+  "Dinosaur Jr. — Without a Sound": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/f4/fe/a6/f4fea658-0337-1ca4-3aa0-e51910447ca1/5037300826219.jpg/300x300bb.jpg",
+  "Duster — Stratosphere": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/4e/87/0c/4e870c4a-f447-2c91-5b7a-53eabb2eb9a1/cover.jpg/300x300bb.jpg",
+  "Duster — Duster": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/9c/72/d1/9c72d105-2818-a365-0199-9527e7dab82e/31691.jpg/300x300bb.jpg",
+  "Duster — Together": "https://coverartarchive.org/release-group/c937b3cc-2d93-49c0-83cc-d341b5e17a49/front-250",
+  "The Garden — haha": "https://coverartarchive.org/release-group/d6d21388-80d9-4917-95b9-3eded4e7174a/front-250",
+  "The Garden — Mirror Might Steal Your Charm": "https://coverartarchive.org/release-group/0cb2e956-be42-4ae2-9375-6ac628619de5/front-250",
+  "The Garden — Kiss My Super Bowl Ring": "https://coverartarchive.org/release-group/639d2c52-ee55-4114-bdd5-009567630529/front-250",
+  "The Garden — HORSESHIT ON ROUTE 66": "https://coverartarchive.org/release-group/18ce1404-319d-4057-b382-aa36edf85017/front-250",
+  "Hole — Celebrity Skin": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/eb/56/a9/eb56a93b-fa8c-20d6-f33a-525084301407/06UMGIM07325.rgb.jpg/300x300bb.jpg",
+  "Korn — Korn": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/76/30/8f/76308f2b-a269-0a62-5dbe-72d57a339225/artwork.jpg/300x300bb.jpg",
+  "Korn — Life Is Peachy": "https://coverartarchive.org/release-group/e958aac9-4f24-3077-96de-117ec44d4dbb/front-250",
+  "Korn — Follow the Leader": "https://coverartarchive.org/release-group/e47ad139-89f6-39e8-aa84-fe84c45aeb7d/front-250",
+  "Korn — Issues": "https://coverartarchive.org/release-group/c7497ce4-c746-3a75-946e-daa8ab117c47/front-250",
+  "Korn — Untouchables": "https://coverartarchive.org/release-group/4041334a-fdca-3a73-878e-8513b464a88d/front-250",
+  "Korn — Take a Look in the Mirror": "https://coverartarchive.org/release-group/bca3ad60-807d-3577-a9d9-2b1cc70c7d48/front-250",
+  "Korn — See You on the Other Side": "https://coverartarchive.org/release-group/ace09cf0-cbc0-33a9-b07a-3e2d8a28cf65/front-250",
+  "My Bloody Valentine — Isn't Anything": "https://coverartarchive.org/release-group/55a73423-bf7d-3969-b1b2-c34c43140e1a/front-250",
+  "My Bloody Valentine — Loveless": "https://coverartarchive.org/release-group/cb76227e-3ac0-3002-9a10-615a5b73cc59/front-250",
+  "My Bloody Valentine — m b v": "https://coverartarchive.org/release-group/46211613-b2c8-4a00-a5ac-c6a8c8226119/front-250",
+  "A Perfect Circle — Mer de Noms": "https://is1-ssl.mzstatic.com/image/thumb/Music4/v4/6a/b1/d8/6ab1d844-7086-0635-6f88-5e972a4bd1ee/NDM-TC_1600x1600.png/300x300bb.jpg",
+  "A Perfect Circle — Thirteenth Step": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/36/46/fb/3646fbc9-ab6c-db5d-e18e-941ea3eb1e1f/APC_13th_TC_1600x1600_1.png/300x300bb.jpg",
+  "Radiohead — Pablo Honey": "https://coverartarchive.org/release-group/cd76f76b-ff15-3784-a71d-4da3078a6851/front-250",
+  "Radiohead — The Bends": "https://coverartarchive.org/release-group/8ea92211-a70b-3993-9301-bb80e0d1a24a/front-250",
+  "Radiohead — OK Computer": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/60/ba/0760ba0f-148c-b18f-d0ff-169ee96f3af5/634904078164.png/300x300bb.jpg",
+  "Radiohead — Kid A": "https://coverartarchive.org/release-group/e75c0549-ad55-39e3-8025-c72c5d4a3c5d/front-250",
+  "Radiohead — Amnesiac": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/43/d8/ec/43d8ec17-0e96-dba9-21d9-4cdf9d98f2bf/634904078362.png/300x300bb.jpg",
+  "Radiohead — Hail to the Thief": "https://coverartarchive.org/release-group/5c14fd50-a2f1-3672-9537-b0dad91bea2f/front-250",
+  "Radiohead — In Rainbows": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/dd/50/c7/dd50c790-99ac-d3d0-5ab8-e3891fb8fd52/634904032463.png/300x300bb.jpg",
+  "The Smashing Pumpkins — Mellon Collie and the Infinite Sadness": "https://coverartarchive.org/release-group/1af599c9-0b44-3a5a-a06b-39e8db6b2b4e/front-250",
+  "Sonic Youth — Daydream Nation": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/9a/55/3b/9a553bab-12a5-a385-31b7-720087fa3130/818756010958_cover.jpg/300x300bb.jpg",
+  "Sonic Youth — Goo": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ec/b5/df/ecb5dfa7-e50f-d44e-eef0-9a4c38abc76f/00602547570017.rgb.jpg/300x300bb.jpg",
+  "Sonic Youth — Dirty": "https://coverartarchive.org/release-group/30fef5ef-b1d4-36b5-8f75-f45b8e76c545/front-250",
+  "Sonic Youth — Washing Machine": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0e/96/6a/0e966a38-e4f6-9dc7-2736-4965d0007a9b/00602547566416.rgb.jpg/300x300bb.jpg",
+  "Sonic Youth — A Thousand Leaves": "https://coverartarchive.org/release-group/d2450e24-9345-376e-b6cc-dfd6b0138de1/front-250",
+  "Sonic Youth — Rather Ripped": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/77/14/c3/7714c3c1-e61b-a743-7571-0e881a9e0646/00602547866653.rgb.jpg/300x300bb.jpg",
+  "Converge — Petitioning the Empty Sky": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/1d/a7/a9/1da7a9f0-c8e9-8e7a-2c21-65384a9fd370/888880847423.jpg/300x300bb.jpg",
+  "Deftones — Around the Fur": "https://coverartarchive.org/release-group/6f935b80-160f-3787-97d6-a4ce342cf8c5/front-250",
+  "The Smashing Pumpkins — Siamese Dream": "https://coverartarchive.org/release-group/a159e102-18bb-42ca-a59e-5f96a7eff241/front-250",
+};
 </script>
 
 <div class="wrap">
@@ -319,7 +589,21 @@ const QUEUE = [
   <div class="controls">
     <div class="wrap">
       <div class="row">
-        <input id="q" class="search" type="search" placeholder="search artist, album, year…" autocomplete="off">
+        <input id="q" class="search" type="search" placeholder="search artist, album, year, genre…" autocomplete="off">
+        <label class="sel"><span>Sort</span>
+          <select id="sort">
+            <option value="artist">Artist A–Z</option>
+            <option value="title">Album A–Z</option>
+            <option value="new">Newest first</option>
+            <option value="old">Oldest first</option>
+            <option value="genre">By genre</option>
+          </select>
+        </label>
+        <label class="sel"><span>Genre</span>
+          <select id="genre"><option value="all">All genres</option></select>
+        </label>
+      </div>
+      <div class="row row2">
         <div class="chips" id="chips">
           <button class="chip on" data-f="all">All</button>
           <button class="chip fav" data-f="fav">★ Favorites</button>
@@ -327,9 +611,9 @@ const QUEUE = [
           <button class="chip" data-f="EP">EP</button>
           <button class="chip" data-f="CP">Comp</button>
         </div>
+        <div class="stats" id="stats"></div>
       </div>
       <div class="jump" id="jump"></div>
-      <div class="stats" id="stats"></div>
     </div>
   </div>
   <div class="paper">
@@ -344,82 +628,114 @@ const QUEUE = [
 
 <div class="wrap"><footer>the archive · est. 2025</footer></div>
 
+<div class="modal" id="modal" hidden>
+  <div class="backdrop" data-close></div>
+  <article class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button class="x" data-close aria-label="Close">×</button>
+    <div class="stagecol"><div class="stage">
+      <button class="nav prev" id="m-prev" aria-label="Previous album">‹</button>
+      <div class="record" id="m-record">
+        <div class="disc" id="m-disc">
+          <div class="spin">
+            <div class="vinyl" id="m-vinyl"></div>
+            <div class="grooves"></div>
+            <div class="sheen"></div>
+            <div class="label"><img id="m-label" alt=""></div>
+            <div class="hole"></div>
+          </div>
+        </div>
+        <div class="sleeve"><img id="m-cover" alt=""><div class="sleeve-ph" id="m-cover-ph"></div></div>
+      </div>
+      <button class="nav next" id="m-next" aria-label="Next album">›</button>
+    </div></div>
+    <div class="info" id="m-info"></div>
+  </article>
+</div>
+
 <script>
 (() => {
   const TYPE_LABEL = {EP:"EP", CP:"COMP", BS:"B-SIDES", GH:"HITS", LV:"LIVE"};
-  const strip = s => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const TYPE_LONG  = {LP:"Studio album", EP:"EP", CP:"Compilation", BS:"B-sides", GH:"Greatest hits", LV:"Live album"};
+  const strip = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "");
   const sortName = a => strip(a).replace(/^(the|a|an)\s+/i, "").toLowerCase();
   const letterOf = a => { const c = sortName(a).charAt(0).toUpperCase(); return /[A-Z]/.test(c) ? c : "#"; };
   const yearNum = y => parseInt(y, 10) || 0;
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
-  const data = RECORDS.map(r => ({...r, type:(r.type || "LP").toUpperCase(), _s:sortName(r.artist), _L:letterOf(r.artist)}))
-    .sort((a,b) => a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title));
-
-  const $ = id => document.getElementById(id);
-  let filter = "all", query = "";
-
-  /* ---------- cover art: Apple Music first, MusicBrainz as backup ---------- */
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const norm = s => strip(s).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const slug = s => "S-" + norm(s || "x");
+  const keyOf = r => r.artist + " — " + r.title;
+  const $ = id => document.getElementById(id);
+
+  const data = RECORDS.map(r => ({...r, type:(r.type || "LP").toUpperCase(), _s:sortName(r.artist), _L:letterOf(r.artist)}));
+  let filter = "all", query = "", sortBy = "artist", genreSel = "all", shownList = [];
+
+  /* ---------- small helpers ---------- */
   const cacheGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
   const cacheSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const WEEK = 7 * 864e5;
+  const WEEK = 7 * 864e5, MONTH = 30 * 864e5;
 
   // fetch JSON, waiting and retrying if the service says "slow down"
+  let pauseUntil = 0;
   async function getJSON(url, tries = 4) {
     for (let i = 0; i < tries; i++) {
+      const wait = pauseUntil - Date.now();
+      if (wait > 0) await sleep(wait);
       const res = await fetch(url);
       if (res.ok) return res.json();
-      if (res.status === 403 || res.status === 429 || res.status === 503) { await sleep(2000 * (i + 1) ** 2); continue; }
+      if (res.status === 403 || res.status === 429 || res.status === 503) { pauseUntil = Date.now() + 3000 * (i + 1); continue; }
       throw new Error("HTTP " + res.status);
     }
     throw new Error("rate limited");
   }
 
-  async function fromITunes(r) {
-    const term = encodeURIComponent(r.artist + " " + r.title);
-    const j = await getJSON(`https://itunes.apple.com/search?term=${term}&entity=album&limit=25`);
-    const a = norm(r.artist).slice(0, 6), t = norm(r.title);
-    const byArtist = (j.results || []).filter(x => norm(x.artistName).includes(a));
-    const best = byArtist.find(x => norm(x.collectionName) === t)
-              || byArtist.find(x => norm(x.collectionName).startsWith(t) && t.length > 1)
-              || (t.length > 3 ? byArtist.find(x => norm(x.collectionName).includes(t)) : null);
-    return best ? best.artworkUrl100.replace("100x100bb", "600x600bb") : null;
-  }
-
   // MusicBrainz allows ~1 request per second, so these run one at a time
   let mbChain = Promise.resolve();
-  function fromMusicBrainz(r) {
-    const job = mbChain.then(async () => {
-      await sleep(1100);
-      const q = encodeURIComponent(`releasegroup:"${r.title.replace(/"/g, "")}" AND artist:"${r.artist.replace(/"/g, "")}"`);
-      const j = await getJSON(`https://musicbrainz.org/ws/2/release-group/?query=${q}&fmt=json&limit=3`);
-      const rg = (j["release-groups"] || [])[0];
-      return rg ? `https://coverartarchive.org/release-group/${rg.id}/front-500` : null;
-    });
+  function mb(path) {
+    const job = mbChain.then(async () => { await sleep(1100); return getJSON("https://musicbrainz.org/ws/2/" + path + (path.includes("?") ? "&" : "?") + "fmt=json"); });
     mbChain = job.catch(() => {});
     return job;
   }
 
+  /* ---------- cover art (saved list first, then Apple Music, then MusicBrainz) ---------- */
+  function pickITunes(results, r) {
+    const a = norm(r.artist).slice(0, 6), t = norm(r.title);
+    const byArtist = (results || []).filter(x => norm(x.artistName).includes(a));
+    return byArtist.find(x => norm(x.collectionName) === t)
+        || byArtist.find(x => norm(x.collectionName).startsWith(t) && t.length > 1)
+        || (t.length > 3 ? byArtist.find(x => norm(x.collectionName).includes(t)) : null);
+  }
+  async function fromITunes(r) {
+    const j = await getJSON(`https://itunes.apple.com/search?term=${encodeURIComponent(r.artist + " " + r.title)}&entity=album&limit=25`);
+    const best = pickITunes(j.results, r);
+    return best ? best.artworkUrl100.replace("100x100bb", "300x300bb") : null;
+  }
+  async function mbGroup(r) {
+    const q = encodeURIComponent(`releasegroup:"${r.title.replace(/"/g, "")}" AND artist:"${r.artist.replace(/"/g, "")}"`);
+    const j = await mb(`release-group/?query=${q}&limit=8`);
+    const gs = j["release-groups"] || [], t = norm(r.title), a = norm(r.artist).slice(0, 6);
+    const ok = g => (g["artist-credit"] || []).some(c => norm(c.name || c.artist?.name).includes(a));
+    return gs.find(g => ok(g) && norm(g.title) === t && /album|ep/i.test(g["primary-type"] || ""))
+        || gs.find(g => ok(g) && norm(g.title) === t)
+        || gs.find(ok) || null;
+  }
   async function findCover(r) {
-    if (r.cover) return r.cover;
     const key = "cover2:" + r.artist + "|" + r.title;
     const hit = cacheGet(key);
     if (hit && hit.url) return hit.url;
     if (hit && hit.none && Date.now() - hit.t < WEEK) return null;
     let url = null, failed = false;
     try { url = await fromITunes(r); } catch { failed = true; }
-    if (!url) { try { url = await fromMusicBrainz(r); } catch { failed = true; } }
+    if (!url) { try { const g = await mbGroup(r); if (g) url = `https://coverartarchive.org/release-group/${g.id}/front-250`; } catch { failed = true; } }
     if (url) cacheSet(key, {url});
-    else if (!failed) cacheSet(key, {none:true, t:Date.now()}); // genuinely not found: retry in a week
+    else if (!failed) cacheSet(key, {none:true, t:Date.now()});
     return url;
   }
+  const coverOf = r => r.cover || SAVED_COVERS[keyOf(r)] || (cacheGet("cover2:" + r.artist + "|" + r.title) || {}).url || null;
 
   let active = 0; const pending = [];
-  const enqueue = fn => { pending.push(fn); pump(); };
   function pump() {
-    while (active < 2 && pending.length) {
+    while (active < 4 && pending.length) {
       active++;
       pending.shift()().catch(() => {}).finally(() => { active--; pump(); });
     }
@@ -429,76 +745,311 @@ const QUEUE = [
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
       const card = e.target, r = card._rec;
-      enqueue(() => findCover(r).then(url => {
-        if (!url) return;
-        const img = card.querySelector("img");
-        img.onload = () => card.classList.add("loaded");
-        img.onerror = () => { try { localStorage.removeItem("cover2:" + r.artist + "|" + r.title); } catch {} };
-        img.src = url;
-      }));
+      pending.push(() => findCover(r).then(url => { if (url) setImg(card, url, r); })); pump();
     });
-  }, {rootMargin:"300px"}) : null;
+  }, {rootMargin:"600px"}) : null;
+  function setImg(card, url, r) {
+    const img = card.querySelector("img");
+    img.onload = () => card.classList.add("loaded");
+    img.onerror = () => { try { localStorage.removeItem("cover2:" + r.artist + "|" + r.title); } catch {} };
+    img.src = url;
+  }
 
-  /* ---------- render ---------- */
+  /* ---------- sorting + grouping ---------- */
+  const decade = r => { const y = yearNum(r.year); return y ? Math.floor(y / 10) * 10 + "s" : "Undated"; };
+  const SORTS = {
+    artist: { cmp:(a,b) => a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title), group:r => r._L, letters:true },
+    title:  { cmp:(a,b) => sortName(a.title).localeCompare(sortName(b.title)) || a._s.localeCompare(b._s), group:r => letterOf(r.title), letters:true },
+    new:    { cmp:(a,b) => yearNum(b.year) - yearNum(a.year) || a._s.localeCompare(b._s), group:decade },
+    old:    { cmp:(a,b) => yearNum(a.year) - yearNum(b.year) || a._s.localeCompare(b._s), group:decade },
+    genre:  { cmp:(a,b) => (a.genre || "~").localeCompare(b.genre || "~") || a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year), group:r => r.genre || "Other" },
+  };
+
   function matches(r) {
     if (filter === "fav" && !r.fav) return false;
     if (["LP","EP","CP"].includes(filter) && r.type !== filter) return false;
+    if (genreSel !== "all" && (r.genre || "") !== genreSel) return false;
     if (!query) return true;
-    const hay = norm(r.artist + " " + r.title + " " + r.year);
-    return hay.includes(norm(query));
+    return norm(r.artist + " " + r.title + " " + r.year + " " + (r.genre || "")).includes(norm(query));
   }
 
   function card(r) {
     const el = document.createElement("article");
     el.className = "card";
     el._rec = r;
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", `${r.artist} — ${r.title}, open details`);
     el.innerHTML = `
       <div class="cover">
         ${r.fav ? '<div class="star">★</div>' : ""}
         <div class="ph"><div class="pa">${esc(r.artist)}</div><div class="pt">${esc(r.title)}</div></div>
-        <img alt="${esc(r.artist)} — ${esc(r.title)}" loading="lazy">
+        <img alt="" loading="lazy">
       </div>
       <div class="meta">
         <div class="artist">${esc(r.artist)}</div>
         <div class="title">${esc(r.title)}</div>
-        <div class="yr"><span>${esc(r.year || "—")}</span>${r.type !== "LP" ? `<span class="tag">${TYPE_LABEL[r.type] || esc(r.type)}</span>` : ""}</div>
+        <div class="yr"><span>${esc(r.year || "—")}</span>${r.genre ? `<span class="dot">·</span><span class="genre">${esc(r.genre)}</span>` : ""}${r.type !== "LP" ? `<span class="tag">${TYPE_LABEL[r.type] || esc(r.type)}</span>` : ""}</div>
       </div>`;
-    if (io) io.observe(el);
+    const known = coverOf(r);
+    if (known) setImg(el, known, r); else if (io) io.observe(el);
+    el.addEventListener("click", () => openAlbum(r));
+    el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openAlbum(r); } });
     return el;
   }
 
   function render() {
+    const S = SORTS[sortBy];
     const list = $("list"); list.innerHTML = "";
-    const shown = data.filter(matches);
-    const groups = {};
-    shown.forEach(r => (groups[r._L] ||= []).push(r));
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("");
+    shownList = data.filter(matches).sort(S.cmp);
+    const groups = new Map();
+    shownList.forEach(r => { const g = S.group(r); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); });
 
-    $("jump").innerHTML = letters.map(L =>
-      `<a href="#L-${L === "#" ? "num" : L}" class="${groups[L] ? "" : "off"}">${L}</a>`).join("");
+    const jump = $("jump");
+    jump.classList.toggle("words", !S.letters);
+    if (S.letters) {
+      jump.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").map(L =>
+        `<a href="#${slug(L === "#" ? "num" : L)}" class="${groups.has(L) ? "" : "off"}">${L}</a>`).join("");
+    } else {
+      jump.innerHTML = [...groups.keys()].map(g => `<a href="#${slug(g)}">${esc(g)}</a>`).join("");
+    }
 
-    letters.filter(L => groups[L]).forEach(L => {
+    const queueHere = sortBy === "artist" && !query && filter === "all" && genreSel === "all";
+    for (const [g, recs] of groups) {
       const sec = document.createElement("section");
       sec.className = "letter";
-      sec.id = "L-" + (L === "#" ? "num" : L);
-      sec.innerHTML = `<div class="lhead"><div class="L">${L}</div><div class="rule"></div><div class="n">${String(groups[L].length).padStart(2,"0")}</div></div><div class="grid"></div>`;
+      sec.id = slug(g === "#" ? "num" : g);
+      sec.innerHTML = `<div class="lhead"><div class="L${S.letters ? "" : " word"}">${esc(g)}</div><div class="rule"></div><div class="n">${String(recs.length).padStart(2,"0")}</div></div><div class="grid"></div>`;
       const grid = sec.querySelector(".grid");
-      groups[L].forEach(r => grid.appendChild(card(r)));
+      recs.forEach(r => grid.appendChild(card(r)));
       list.appendChild(sec);
-    });
+    }
+    $("queue").hidden = !queueHere;
 
-    if (!shown.length) list.innerHTML = `<div class="empty"><div class="big">Nothing</div><p>no records match</p></div>`;
-
-    const artists = new Set(shown.map(r => r.artist)).size;
-    const favs = shown.filter(r => r.fav).length;
-    $("stats").innerHTML = `<b>${shown.length}</b> records · <b>${artists}</b> artists · <b>${favs}</b> ★`;
+    if (!shownList.length) list.innerHTML = `<div class="empty"><div class="big">Nothing</div><p>no records match</p></div>`;
+    const artists = new Set(shownList.map(r => r.artist)).size;
+    const favs = shownList.filter(r => r.fav).length;
+    $("stats").innerHTML = `<b>${shownList.length}</b> records · <b>${artists}</b> artists · <b>${favs}</b> ★`;
   }
 
-  $("queue").innerHTML = `<h2>On Queue<span>.</span></h2><ul>${
-    [...QUEUE].sort((a,b) => sortName(a).localeCompare(sortName(b))).map(b => `<li>${esc(b)}</li>`).join("")}</ul>`;
+  /* ---------- album popup ---------- */
+  const fmtTime = ms => { if (!ms) return ""; const s = Math.round(ms / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+  const fmtLong = ms => { const m = Math.round(ms / 60000); return m >= 60 ? `${Math.floor(m/60)} hr ${m % 60} min` : `${m} min`; };
+  const fmtDate = d => {
+    if (!d) return "";
+    const [y, m, day] = d.split("-");
+    if (!m) return y;
+    const M = ["January","February","March","April","May","June","July","August","September","October","November","December"][+m - 1];
+    return day ? `${M} ${+day}, ${y}` : `${M} ${y}`;
+  };
+  const COUNTRY = {US:"USA",GB:"UK",XE:"Europe",XW:"Worldwide",DE:"Germany",JP:"Japan",FR:"France",CA:"Canada",AU:"Australia",NL:"Netherlands",IT:"Italy",ES:"Spain",MX:"Mexico",BR:"Brazil",SE:"Sweden",IE:"Ireland",IS:"Iceland",AR:"Argentina",KR:"South Korea",RU:"Russia",NZ:"New Zealand",BE:"Belgium",DK:"Denmark",NO:"Norway",GR:"Greece",PT:"Portugal",AT:"Austria",CH:"Switzerland",PL:"Poland",CZ:"Czechia",TW:"Taiwan"};
+  const country = c => c ? (COUNTRY[c] || c) : "";
+
+  // pull the two strongest colors out of the cover, for the colored vinyl
+  function coverColors(src) {
+    return new Promise(resolve => {
+      if (!src) return resolve(null);
+      const im = new Image();
+      im.crossOrigin = "anonymous";
+      const t = setTimeout(() => resolve(null), 6000);
+      im.onload = () => {
+        clearTimeout(t);
+        try {
+          const N = 28, c = document.createElement("canvas"); c.width = c.height = N;
+          const x = c.getContext("2d", {willReadFrequently:true}); x.drawImage(im, 0, 0, N, N);
+          const d = x.getImageData(0, 0, N, N).data, bins = {};
+          for (let i = 0; i < d.length; i += 4) {
+            const r = d[i], g = d[i+1], b = d[i+2];
+            const mx = Math.max(r,g,b), mn = Math.min(r,g,b), l = (mx + mn) / 510, s = mx === mn ? 0 : (mx - mn) / (255 - Math.abs(mx + mn - 255));
+            let key;
+            if (s < .2 || l < .08 || l > .94) key = l < .3 ? "dark" : l > .72 ? "light" : "grey";
+            else { let h = mx === r ? (g - b) / (mx - mn) : mx === g ? 2 + (b - r) / (mx - mn) : 4 + (r - g) / (mx - mn); h = (h * 60 + 360) % 360; key = "h" + Math.floor(h / 30); }
+            const o = bins[key] ||= {n:0, r:0, g:0, b:0, sat:key[0] === "h"};
+            o.n++; o.r += r; o.g += g; o.b += b;
+          }
+          const total = N * N;
+          const list = Object.values(bins).map(o => ({...o, w:o.n * (o.sat ? 1.6 : 1)})).sort((a,b) => b.w - a.w);
+          const col = o => `rgb(${Math.round(o.r/o.n)},${Math.round(o.g/o.n)},${Math.round(o.b/o.n)})`;
+          const main = list[0], second = list.find(o => o !== main && o.n > total * .04) || main;
+          resolve([col(main), col(second)]);
+        } catch { resolve(null); }
+      };
+      im.onerror = () => { clearTimeout(t); resolve(null); };
+      im.src = src + (src.includes("?") ? "&" : "?") + "cors=1";
+    });
+  }
+
+  async function albumInfo(r) {
+    const key = "info2:" + keyOf(r);
+    const hit = cacheGet(key);
+    if (hit && Date.now() - hit.t < MONTH) return hit;
+    const out = {t:Date.now()};
+    // Apple Music: tracklist, lengths, label line
+    try {
+      const j = await getJSON(`https://itunes.apple.com/search?term=${encodeURIComponent(r.artist + " " + r.title)}&entity=album&limit=25`);
+      const al = pickITunes(j.results, r);
+      if (al) {
+        out.apple = {url:al.collectionViewUrl, copyright:al.copyright, genre:al.primaryGenreName, date:(al.releaseDate || "").slice(0,10)};
+        const k = await getJSON(`https://itunes.apple.com/lookup?id=${al.collectionId}&entity=song&limit=200`);
+        out.tracks = (k.results || []).filter(x => x.wrapperType === "track")
+          .sort((a,b) => a.discNumber - b.discNumber || a.trackNumber - b.trackNumber)
+          .map(x => ({disc:x.discNumber, n:x.trackNumber, title:x.trackName, ms:x.trackTimeMillis}));
+      }
+    } catch {}
+    // MusicBrainz: original release + vinyl pressings
+    try {
+      const g = await mbGroup(r);
+      if (g) {
+        out.mbid = g.id; out.firstDate = g["first-release-date"] || "";
+        const j = await mb(`release?release-group=${g.id}&inc=labels+media&limit=100`);
+        const rels = (j.releases || []).sort((a,b) => (a.date || "9999").localeCompare(b.date || "9999"));
+        const lab = x => { const li = (x["label-info"] || []).find(l => l.label); return li ? {name:li.label.name, cat:li["catalog-number"] || ""} : null; };
+        const orig = rels.find(lab);
+        if (orig) out.label = lab(orig).name;
+        out.releaseCount = rels.length;
+        const isVinyl = x => (x.media || []).some(m => /vinyl/i.test(m.format || ""));
+        out.vinyl = rels.filter(isVinyl).map(x => {
+          const L = lab(x) || {};
+          const fm = (x.media || []).filter(m => /vinyl/i.test(m.format || ""));
+          const fmt = fm.length > 1 ? `${fm.length}× ${fm[0].format}` : (fm[0] || {}).format;
+          return {date:x.date || "", country:x.country || "", label:L.name || "", cat:L.cat || "", fmt:fmt || "Vinyl", note:x.disambiguation || ""};
+        });
+        if (!out.tracks || !out.tracks.length) {
+          const pick = rels.find(x => x.status === "Official") || rels[0];
+          if (pick) {
+            const d = await mb(`release/${pick.id}?inc=recordings`);
+            out.tracks = (d.media || []).flatMap((m, i) => (m.tracks || []).map(t => ({disc:i + 1, n:t.number || t.position, title:t.title, ms:t.length || 0})));
+          }
+        }
+      }
+    } catch {}
+    if (out.apple || out.mbid) cacheSet(key, out);
+    return out;
+  }
+
+  let current = null, openToken = 0;
+  function openAlbum(r) {
+    current = r;
+    const token = ++openToken;
+    const m = $("modal"), rec = $("m-record");
+    const src = coverOf(r);
+    const ph = $("m-cover-ph"), cv = $("m-cover"), lb = $("m-label");
+    const noCover = () => { cv.style.display = "none"; lb.style.display = "none"; ph.style.display = "flex"; };
+    ph.textContent = r.title;
+    cv.onerror = noCover;
+    if (src) { cv.style.display = ""; lb.style.display = ""; ph.style.display = "none"; cv.src = src; lb.src = src; }
+    else { cv.removeAttribute("src"); lb.removeAttribute("src"); noCover(); }
+    $("m-vinyl").style.background = "#111";
+    rec.classList.remove("out"); void rec.offsetWidth;
+    m.hidden = false; document.body.classList.add("locked");
+    setTimeout(() => { if (token === openToken) rec.classList.add("out"); }, 280);
+    coverColors(src).then(c => {
+      if (token !== openToken || !c) return;
+      $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
+      current._colors = c;
+      const sw = document.querySelector("#m-info .swatches");
+      if (sw) sw.innerHTML = c.map(x => `<i style="background:${x}"></i>`).join("");
+    });
+
+    const stars = r.rating ? "★".repeat(Math.floor(r.rating)) + (r.rating % 1 ? "½" : "") : "";
+    $("m-info").innerHTML = `
+      <div class="k">${esc(r.artist)}</div>
+      <h2 id="m-title">${esc(r.title)}</h2>
+      <div class="metaline">
+        <span class="pill">${esc(r.year || "—")}</span>
+        ${r.genre ? `<span class="pill">${esc(r.genre)}</span>` : ""}
+        <span class="pill">${esc(TYPE_LONG[r.type] || r.type)}</span>
+        ${r.fav ? `<span class="pill fav">★ Favorite</span>` : ""}
+      </div>
+      <h3>Release</h3><div id="m-release" class="loading">Looking it up…</div>
+      <h3>Tracklist</h3><div id="m-tracks" class="loading">Loading tracks…</div>
+      <h3>On Vinyl</h3><div id="m-vinylinfo" class="loading">Finding pressings…</div>
+      <h3>My Notes</h3>
+      ${r.notes || r.rating ? `${stars ? `<div class="rating">${stars}</div>` : ""}<div class="notes">${esc(r.notes || "")}</div>` : `<p class="muted">No notes yet.</p>`}
+    `;
+
+    albumInfo(r).then(info => {
+      if (token !== openToken) return;
+      const len = (info.tracks || []).reduce((s, t) => s + (t.ms || 0), 0);
+      const facts = [
+        ["Released", fmtDate(info.firstDate) || fmtDate(info.apple?.date) || r.year],
+        ["Label", info.label || (info.apple?.copyright || "").replace(/^[℗©]\s*\d{4}\s*/, "")],
+        ["Tracks", info.tracks?.length || ""],
+        ["Length", len ? fmtLong(len) : ""],
+      ].filter(f => f[1]);
+      const rel = $("m-release"); rel.className = "";
+      rel.innerHTML = facts.length ? `<dl class="facts">${facts.map(f => `<dt>${f[0]}</dt><dd>${esc(f[1])}</dd>`).join("")}</dl>` : `<p class="muted">Couldn't find release details.</p>`;
+
+      const tr = $("m-tracks"); tr.className = "";
+      if (info.tracks && info.tracks.length) {
+        const multi = new Set(info.tracks.map(t => t.disc)).size > 1;
+        let lastDisc = 0, html = "";
+        for (const t of info.tracks) {
+          if (multi && t.disc !== lastDisc) { html += `<li class="disc-h">Disc ${t.disc}</li>`; lastDisc = t.disc; }
+          html += `<li><span class="n">${esc(t.n)}</span><span class="t">${esc(t.title)}</span><span class="d">${fmtTime(t.ms)}</span></li>`;
+        }
+        tr.innerHTML = `<ol class="tracks">${html}</ol>`;
+      } else tr.innerHTML = `<p class="muted">Tracklist not found.</p>`;
+
+      const vi = $("m-vinylinfo"); vi.className = "";
+      const v = info.vinyl || [];
+      const q = encodeURIComponent(r.artist + " " + r.title);
+      const links = `<div class="links">
+          <a href="https://www.discogs.com/search/?q=${q}&type=master" target="_blank" rel="noopener">Discogs</a>
+          ${info.mbid ? `<a href="https://musicbrainz.org/release-group/${info.mbid}" target="_blank" rel="noopener">MusicBrainz</a>` : ""}
+          ${info.apple?.url ? `<a href="${esc(info.apple.url)}" target="_blank" rel="noopener">Apple Music</a>` : ""}
+        </div>`;
+      const sw = `<div class="k" style="margin-top:2px">Colors pulled from the cover</div><div class="swatches">${(current._colors || []).map(x => `<i style="background:${x}"></i>`).join("")}</div>`;
+      if (v.length) {
+        const first = v[0];
+        const variants = [...new Set(v.map(x => x.note).filter(n => /\b(colou?red|clear|splatter|marbled?|red|blue|green|white|pink|purple|yellow|orange|gold|silver|smoke|transparent|translucent|picture disc|vinyl variant|swirl|galaxy|black ice|half)\b/i.test(n)))].slice(0, 8);
+        const rows = v.slice(0, 6).map(x => `<li><b>${esc((x.date || "").slice(0,4) || "Undated")}</b>${x.country ? " · " + esc(country(x.country)) : ""} · ${esc(x.fmt)}
+            <div class="psub">${esc([x.label, x.cat].filter(Boolean).join(" — "))}${x.note ? " · " + esc(x.note) : ""}</div></li>`).join("");
+        vi.innerHTML = `
+          <dl class="facts">
+            <dt>First on vinyl</dt><dd>${esc(fmtDate(first.date) || "Unknown date")}${first.country ? ", " + esc(country(first.country)) : ""}</dd>
+            ${first.label ? `<dt>Label</dt><dd>${esc(first.label)}${first.cat ? ` <span class="muted">(${esc(first.cat)})</span>` : ""}</dd>` : ""}
+            <dt>Pressings</dt><dd>${v.length} vinyl release${v.length === 1 ? "" : "s"} catalogued</dd>
+            ${variants.length ? `<dt>Variants</dt><dd>${variants.map(esc).join(", ")}</dd>` : ""}
+          </dl>
+          ${sw}
+          <h3 style="margin-top:16px">Pressings</h3><ul class="pressings">${rows}</ul>
+          ${v.length > 6 ? `<p class="muted" style="margin-top:6px">+ ${v.length - 6} more on Discogs / MusicBrainz</p>` : ""}
+          ${links}`;
+      } else {
+        vi.innerHTML = `<p class="muted">No vinyl pressings catalogued yet.</p>${sw}${links}`;
+      }
+    });
+  }
+  function closeAlbum() {
+    openToken++;
+    $("modal").hidden = true; document.body.classList.remove("locked");
+    $("m-record").classList.remove("out");
+  }
+  function step(dir) {
+    if (!current) return;
+    const i = shownList.indexOf(current);
+    if (i < 0) return;
+    openAlbum(shownList[(i + dir + shownList.length) % shownList.length]);
+  }
+  $("modal").addEventListener("click", e => { if (e.target.closest("[data-close]")) closeAlbum(); });
+  $("m-prev").addEventListener("click", () => step(-1));
+  $("m-next").addEventListener("click", () => step(1));
+  document.addEventListener("keydown", e => {
+    if ($("modal").hidden) return;
+    if (e.key === "Escape") closeAlbum();
+    else if (e.key === "ArrowRight") step(1);
+    else if (e.key === "ArrowLeft") step(-1);
+  });
 
   /* ---------- controls ---------- */
+  const genres = [...new Set(data.map(r => r.genre).filter(Boolean))].sort();
+  $("genre").insertAdjacentHTML("beforeend", genres.map(g => `<option>${esc(g)}</option>`).join(""));
+  $("queue").innerHTML = `<h2>On Queue<span>.</span></h2><ul>${
+    [...QUEUE].sort((a,b) => sortName(a).localeCompare(sortName(b))).map(b => `<li>${esc(b)}</li>`).join("")}</ul>`;
   $("q").addEventListener("input", e => { query = e.target.value.trim(); render(); });
+  $("sort").addEventListener("change", e => { sortBy = e.target.value; render(); });
+  $("genre").addEventListener("change", e => { genreSel = e.target.value; render(); });
   $("chips").addEventListener("click", e => {
     const b = e.target.closest(".chip"); if (!b) return;
     filter = b.dataset.f;
