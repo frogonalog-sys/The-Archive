@@ -157,6 +157,8 @@ footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;
 .disc.see-through .spin{box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.12)}
 .disc.see-through .vinyl{backdrop-filter:blur(2px)}
 .record.reallabel .hole{opacity:.0}
+.record.photo .label,.record.photo .hole{display:none}
+.record.photo .grooves{opacity:.45}
 .hole{position:absolute;left:50%;top:50%;width:3.2%;height:3.2%;transform:translate(-50%,-50%);border-radius:50%;background:#17110c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
 
 .info{padding:40px 36px 36px;font-family:var(--mono);font-size:16px;line-height:1.5}
@@ -225,6 +227,7 @@ body.locked{overflow:hidden}
      notes: "…"         → your thoughts, shown in the album's pop-up
      rating: 4.5        → stars in the pop-up (out of 5)
      labelImg: "labels/…jpg" → photo of YOUR record's center label (square crop)
+     vinylImg: "vinyl/…jpg" → a photo of YOUR whole record (square, record filling the frame) — spins as-is
      vinyl: "smoke"     → your record's color: black, clear, smoke, white, or any color like "#7a1f2b"
    ===================================================================== */
 const RECORDS = [
@@ -363,6 +366,7 @@ const RECORDS = [
   { artist:"Duster", title:"Together", year:2022, genre:"Slowcore" },
   // F
   { artist:"Fleshwater", title:"We're Not Here to Be Loved", year:2022, genre:"Alt Metal", labelImg:"labels/fleshwater-were-not-here-to-be-loved.jpg", vinyl:"smoke" },
+  { artist:"Fleshwater", title:"2000: In Search of the Endless Sky", year:2025, genre:"Alt Metal", vinylImg:"vinyl/fleshwater-2000.jpg" },
   // G
   { artist:"The Garden", title:"haha", year:2015, genre:"Punk" },
   { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018, genre:"Punk" },
@@ -372,7 +376,7 @@ const RECORDS = [
   { artist:"Hole", title:"Celebrity Skin", year:1998, fav:true, genre:"Alt Rock" },
   // K
   { artist:"Korn", title:"Korn", year:1994, fav:true, genre:"Nu Metal" },
-  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true, genre:"Nu Metal" },
+  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true, genre:"Nu Metal", vinylImg:"vinyl/korn-life-is-peachy.jpg" },
   { artist:"Korn", title:"Follow the Leader", year:1998, fav:true, genre:"Nu Metal" },
   { artist:"Korn", title:"Issues", year:1999, genre:"Nu Metal" },
   { artist:"Korn", title:"Untouchables", year:2002, genre:"Nu Metal" },
@@ -383,6 +387,7 @@ const RECORDS = [
   { artist:"My Bloody Valentine", title:"Loveless", year:1991, fav:true, genre:"Shoegaze" },
   { artist:"My Bloody Valentine", title:"m b v", year:2013, genre:"Shoegaze" },
   // P
+  { artist:"Panic! at the Disco", title:"A Fever You Can't Sweat Out", year:2005, genre:"Pop Punk", cover:"covers/panic-a-fever-you-cant-sweat-out.jpg", vinylImg:"vinyl/panic-a-fever-you-cant-sweat-out.jpg" },
   { artist:"A Perfect Circle", title:"Mer de Noms", year:2000, genre:"Alt Metal" },
   { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, fav:true, genre:"Alt Metal" },
   // R
@@ -1016,6 +1021,7 @@ const SAVED_COVERS = {
     const noCover = () => { cv.style.display = "none"; lb.style.display = "none"; ph.style.display = "flex"; };
     ph.textContent = r.title;
     cv.onerror = noCover;
+    const vImg = r.vinylImg || null;
     const realLabel = r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null;
     if (src) { cv.style.display = ""; ph.style.display = "none"; cv.src = src; }
     else { cv.removeAttribute("src"); noCover(); }
@@ -1026,14 +1032,15 @@ const SAVED_COVERS = {
     $("m-record").classList.toggle("reallabel", !!realLabel);
     const VINYL = {black:"#111", clear:"rgba(236,232,222,.22)", smoke:"rgba(70,68,64,.62)", white:"#ece8e0"};
     const ownVinyl = r.vinyl ? (VINYL[r.vinyl] || r.vinyl) : null;
-    $("m-vinyl").style.background = ownVinyl || "#111";
+    $("m-vinyl").style.background = vImg ? `#111 url("${vImg}") center/cover no-repeat` : (ownVinyl || "#111");
+    $("m-record").classList.toggle("photo", !!vImg && !r.labelImg);
     $("m-disc").classList.toggle("see-through", /clear|smoke/.test(r.vinyl || ""));
     rec.classList.remove("out"); void rec.offsetWidth;
     m.hidden = false; document.body.classList.add("locked");
     setTimeout(() => { if (token === openToken) rec.classList.add("out"); }, 280);
     coverColors(src).then(c => {
       if (token !== openToken || !c) return;
-      if (!ownVinyl) $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
+      if (!ownVinyl && !vImg) $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
       current._colors = c;
       const sw = document.querySelector("#m-info .swatches");
       if (sw) sw.innerHTML = c.map(x => `<i style="background:${x}"></i>`).join("");
