@@ -233,7 +233,6 @@ body.locked{overflow:hidden}
 const RECORDS = [
   // A
   { artist:"Acid Bath", title:"When the Kite String Pops", year:1994, genre:"Sludge Metal" },
-  { artist:"Agent Orange", title:"Living in Darkness", year:1981, genre:"Punk" },
   { artist:"Alex G", title:"Trick", year:2012, genre:"Indie Rock" },
   { artist:"Alice In Chains", title:"Facelift", year:1990, genre:"Grunge" },
   { artist:"Alice In Chains", title:"Dirt", year:1992, genre:"Grunge" },
@@ -494,18 +493,17 @@ const SAVED_LABELS = {
 const SAVED_COVERS = {
   "Fleshwater — We're Not Here to Be Loved": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/50/6d/02/506d0266-4c1f-93d0-5451-fdcb9d4d4a19/196626707086.jpg/300x300bb.jpg",
   "Acid Bath — When the Kite String Pops": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/fb/3e/93/fb3e9398-ec15-c0f8-a6e3-2c92fc68bcea/888880845054.tif/300x300bb.jpg",
-  "Agent Orange — Living in Darkness": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/98/85/56/988556eb-5f73-1a28-f4f8-4cb0bcb11150/859747115269_cover.jpg/300x300bb.jpg",
   "Alex G — Trick": "https://coverartarchive.org/release-group/a1851b11-5c14-497a-af7a-fa04c0946c78/front-250",
   "Alice In Chains — Facelift": "https://coverartarchive.org/release-group/7d026b9c-9159-34b5-a40d-14f134718394/front-250",
   "Alice In Chains — Dirt": "https://coverartarchive.org/release-group/92d8f0c4-8c64-3bee-bee1-812a70e77efa/front-250",
   "Alice In Chains — Jar of Flies": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/bd/d6/37/bdd6373e-dc26-e86e-1d31-9bb1f7656968/5099747485527.jpg/300x300bb.jpg",
-  "Alice In Chains — Alice in Chains": "https://coverartarchive.org/release-group/5918ad2b-91e7-4edd-b8e9-dfb57afa0f80/front-250",
+  "Alice In Chains — Alice in Chains": "https://coverartarchive.org/release/487ed212-eabc-41e7-8e83-aefd145ee24f/39596748661-500.jpg",
   "Alice In Chains — Black Gives Way to Blue": "https://coverartarchive.org/release-group/5bf55ee1-5074-4fbe-9cce-fde92e9161cf/front-250",
   "Alice In Chains — The Devil Put Dinosaurs Here": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1c/eb/ba/1cebba07-dead-6376-3277-a2dd20bf0640/24CRGIM42068.rgb.jpg/300x300bb.jpg",
   "Arctic Monkeys — Whatever People Say I Am, That's What I'm Not": "https://coverartarchive.org/release-group/6c9c4985-3628-3070-b956-b538f30c9bea/front-250",
   "Arctic Monkeys — Favourite Worst Nightmare": "https://coverartarchive.org/release-group/f113fa38-7908-3ec9-8145-d2455e78a8b2/front-250",
   "Arctic Monkeys — Humbug": "https://coverartarchive.org/release-group/23b7e9e9-8820-4a49-b44f-a7a60e0a7e81/front-250",
-  "Arctic Monkeys — Suck It and See": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/23/e1/c1/23e1c159-654d-1c66-f0cf-e4ca6bc9932d/mzi.kfuzglya.jpg/300x300bb.jpg",
+  "Arctic Monkeys — Suck It and See": "https://is1-ssl.mzstatic.com/image/thumb/Features/62/5b/66/dj.wlpuxxqn.jpg/600x600bb.jpg",
   "Arctic Monkeys — AM": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/69/9c/b5/699cb5d6-115c-ff73-9d26-e57ea4350d72/887828031795.png/300x300bb.jpg",
   "Arctic Monkeys — Tranquility Base Hotel & Casino": "https://coverartarchive.org/release-group/97ee3a0f-183b-4830-aa5c-45507a084d37/front-250",
   "Arctic Monkeys — The Car": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/44/8e/cf/448ecfff-7f7d-286c-8a4a-b631eeeefedb/887828045563.png/300x300bb.jpg",
@@ -800,7 +798,9 @@ const SAVED_COVERS = {
     const j = await mb(`release-group/?query=${q}&limit=8`);
     const gs = j["release-groups"] || [], t = norm(r.title), a = norm(r.artist).slice(0, 6);
     const ok = g => (g["artist-credit"] || []).some(c => norm(c.name || c.artist?.name).includes(a));
-    return gs.find(g => ok(g) && norm(g.title) === t && /album|ep/i.test(g["primary-type"] || ""))
+    const yr = String(yearNum(r.year) || "");
+    return (yr && gs.find(g => ok(g) && norm(g.title) === t && (g["first-release-date"] || "").startsWith(yr)))
+        || gs.find(g => ok(g) && norm(g.title) === t && /album|ep/i.test(g["primary-type"] || ""))
         || gs.find(g => ok(g) && norm(g.title) === t)
         || gs.find(ok) || null;
   }
