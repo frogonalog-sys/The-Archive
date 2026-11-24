@@ -441,6 +441,7 @@ const RECORDS = [
   { artist:"Ill Niño", title:"Revolution Revolución", year:2001, genre:"Nu Metal" },
   { artist:"Indigo De Souza", title:"I Love My Mom", year:2018, genre:"Indie Rock" },
   { artist:"Interpol", title:"Turn On the Bright Lights", year:2002, genre:"Post-Punk" },
+  { artist:"Interpol", title:"Antics", year:2004, genre:"Post-Punk" },
   { artist:"Interpol", title:"Our Love to Admire", year:2007, genre:"Post-Punk" },
   { artist:"Interpol", title:"El Pintor", year:2014, genre:"Post-Punk" },
   { artist:"Jack Off Jill", title:"Clear Hearts Grey Flowers", year:2000, genre:"Alt Rock" },
@@ -517,6 +518,271 @@ const QUEUE = [
 ];
 
 /* Real center labels found online (photos/scans of actual pressings). */
+// Hand-entered tracklists (override Apple/MusicBrainz): "Artist — Title": [[title, seconds], ...]
+const TRACKS = {
+"Hong Kong Fuck You — 1978-1981": [
+[
+"Kill a Commie",
+63
+],
+[
+"Out of Vogue",
+63
+],
+[
+"Seeing Red",
+66
+]
+],
+"Hong Kong Fuck You — Guilt Dispenser Split": [
+[
+"Eater of Ass is Not The Bastard",
+43
+],
+[
+"Abundance of Ass Eating",
+31
+],
+[
+"The Great Ass Eater",
+44
+],
+[
+"Ass-Eater Grimace",
+3
+],
+[
+"Short Trek to Go Eat Some Ass",
+25
+],
+[
+"Starvation Cage For Non Ass Eaters",
+36
+],
+[
+"E.A.T.A.S.S (Continuass Play)",
+177
+]
+],
+"Hong Kong Fuck You — Happy Shitting Rainbows": [
+[
+"Peace and Silence",
+72
+],
+[
+"Happy Shitting Rainbows",
+47
+],
+[
+"This Is A Friendly Public Service Announcement",
+50
+]
+],
+"Hong Kong Fuck You — Third World Fighting Music": [
+[
+"Let's Hong Kong Fucking Go!",
+39
+],
+[
+"Hong Kong Fuck the Black, White, and Blue",
+40
+],
+[
+"Hong Kong Fuck You Up",
+57
+],
+[
+"Hong Kong Fuck You Have a Nice Day",
+1
+],
+[
+"Hong Kong Fuck U.S.A.",
+1
+],
+[
+"Hong Kong Fuck You, Ese",
+1
+],
+[
+"Hong Kong Fuck Music",
+1
+],
+[
+"Hong Kong Fuck You, Punk",
+2
+],
+[
+"Hong Kong Fucking Kill Yourself",
+37
+],
+[
+"Hong Kong Fuck You Long Time (Interlude)",
+39
+],
+[
+"Hong Kong Fuck the First World",
+21
+],
+[
+"Hong Kong's Sweet Fucking Revenge",
+25
+],
+[
+"Hong Kong Less Fucking and More Talking About Overpopulation.",
+25
+],
+[
+"Hong Kong Fucking Kill Your Family",
+88
+],
+[
+"THIRD WORLD FIGHTING MUSIC (Continuous Play)",
+377
+]
+],
+"Hong Kong Fuck You — Now That's What I Call Hong Kong Fuck You's Greatest Hits Vol. 69": [
+[
+"VODKA & SHITPILLS",
+32
+],
+[
+"GIVE ME THE KEYS",
+49
+],
+[
+"BUNG DILLY IV XX",
+27
+],
+[
+"I DESERVE THIS",
+63
+],
+[
+"A LA VERGA",
+29
+]
+],
+"Hong Kong Fuck You — Another Fucking Day in Paradise": [
+[
+"HONG KONG FUCK YOU",
+91
+],
+[
+"READY TO LOSE?",
+16
+],
+[
+"ANOTHER FUCKING DAY IN PARADISE",
+68
+],
+[
+"SOONER OR LATER, SOMETHING IS GOING TO GET YOU",
+117
+]
+],
+"Hong Kong Fuck You — 8 Years of Violent Audio Terrorism!": [
+[
+"HONG KONG FUCK YOU",
+91
+],
+[
+"READY TO LOSE?",
+16
+],
+[
+"ANOTHER FUCKING DAY IN PARADISE",
+68
+],
+[
+"SOONER OR LATER, SOMETHING IS GOING TO GET YOU",
+117
+],
+[
+"VODKA & SHITPILLS",
+32
+],
+[
+"GIVE ME THE KEYS",
+49
+],
+[
+"BUNG DILLY IV XX",
+27
+],
+[
+"I DESERVE THIS",
+63
+],
+[
+"A LA VERGA",
+29
+],
+[
+"FAST DRUGS - SLOW DEATH",
+80
+],
+[
+"FUCK YOU. JUST DIE.",
+9
+],
+[
+"PIG HALO",
+159
+],
+[
+"Hong Kong fucks you for 9 minutes and 5 seconds",
+545
+],
+[
+"THIRD WORLD FIGHTING MUSIC (Continuous Play)",
+377
+],
+[
+"Peace and Silence",
+72
+],
+[
+"Happy Shitting Rainbows",
+47
+],
+[
+"This Is A Friendly Public Service Announcement",
+50
+],
+[
+"E.A.T.A.S.S (Continuass Play)",
+177
+],
+[
+"A LA MIERDA",
+90
+],
+[
+"KILL A SKINHEAD",
+121
+],
+[
+"Surf Nazis Must Die vs. Mother Speed",
+81
+],
+[
+"Kill A Commie",
+63
+],
+[
+"Out of Vogue",
+63
+],
+[
+"Seeing Red",
+66
+],
+[
+"THE KIDS WILL GET THEIR REVENGE",
+151
+]
+]
+};
 const SAVED_LABELS = {
   "Korn — Follow the Leader": {"img": "https://coverartarchive.org/release/87dbd4bb-15f1-4a82-bf3b-95b2ae496114/44748597887-500.jpg"},
   "Korn — Issues": {"img": "https://coverartarchive.org/release/3de8256e-7e5b-4e2b-bc30-de4808994313/44837868452-500.jpg"},
@@ -588,6 +854,7 @@ const SAVED_LABELS = {
    You never need to edit this. New albums get looked up automatically,
    and a cover:"…" on an album line always wins over this list. */
 const SAVED_COVERS = {
+  "Interpol — Antics": "https://coverartarchive.org/release/1c6008bb-278e-4f60-b2db-a61ac00c682a/front-500",
   "Expire — Pendulum Swings": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/66/cb/7d/66cb7d3d-d846-aef2-7ddf-e9739693d11d/00811772026750.rgb.jpg/600x600bb.jpg",
   "Expire — Pretty Low": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/da/95/d4/da95d49d-afc3-0379-31f7-615637e35049/00811772021151.rgb.jpg/600x600bb.jpg",
   "The Garden — The Life and Times of a Paperclip": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1e/a1/95/1ea195d8-d1bf-de0f-d864-6394995d1075/396003.jpg/600x600bb.jpg",
@@ -630,7 +897,7 @@ const SAVED_COVERS = {
   "Joy Division — Unknown Pleasures": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/13/90/c0/1390c072-4249-3739-7b3d-fd73ee4a5698/825646562831.jpg/600x600bb.jpg",
   "julie — my anti-aircraft friend": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/91/79/91/9179910b-902f-af81-3375-cdd8e6226fc8/075679660169.jpg/600x600bb.jpg",
   "The Killers — Hot Fuss": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/1a/5a/071a5aee-6e42-060c-35b9-6a6e45b9ea59/06UMGIM10441.rgb.jpg/600x600bb.jpg",
-  "Kittie — Spit": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/90/72/27/90722784-8c76-ba00-114f-7e51ea0b9848/s05.ciunjvqi.jpg/600x600bb.jpg",
+  "Kittie — Spit": "https://coverartarchive.org/release/b1da59ec-5af6-4498-8f7c-b339bcbce759/front-500",
   "Kurt Cobain — Montage of Heck: The Home Recordings": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/6f/b5/61/6fb561d6-2ded-097a-2835-f2704375910c/00602547607102.rgb.jpg/600x600bb.jpg",
   "Kind of Like Spitting — Nothing Makes Sense Without It": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ba/6b/56/ba6b56f6-9b13-8e6d-61a4-dd9c26de1f1d/657434.jpg/600x600bb.jpg",
   "La Unión — Mil Siluetas": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/80/b0/11/80b011fe-628e-779a-c08c-f479848ee261/643443185967.jpg/600x600bb.jpg",
@@ -657,15 +924,15 @@ const SAVED_COVERS = {
   "Korn — Take a Look in the Mirror": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/3a/c2/03/3ac203cc-916d-97c5-946a-957532ef4c72/886443469013.jpg/600x600bb.jpg",
   "Korn — See You on the Other Side": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/05/87/ad/0587ad45-51e5-f00c-48a4-941452a65d85/5054526859951.jpg/600x600bb.jpg",
   "The Libertines — The Libertines": "https://coverartarchive.org/release-group/95524ec1-dfa4-3da0-8e45-6ef9d229a2e2/front-500",
-  "Los Terrícolas — Llorarás": "https://coverartarchive.org/release-group/b1315124-8015-4bd0-9983-9a06e3c66e96/front-500",
+  "Los Terrícolas — Llorarás": "https://coverartarchive.org/release/499610b7-01ef-4d87-96a9-010baf6f71f9/front-500",
   "Korn — Korn": "https://coverartarchive.org/release-group/aa08a002-2777-39cf-a554-e0988fc68030/front-500",
-  "Hong Kong Fuck You — 8 Years of Violent Audio Terrorism!": "https://f4.bcbits.com/img/a1229937592_10.jpg",
+  "Hong Kong Fuck You — 8 Years of Violent Audio Terrorism!": "covers/hkfy-8-years.jpg",
   "Hong Kong Fuck You — Another Fucking Day in Paradise": "https://f4.bcbits.com/img/a0933876281_10.jpg",
   "Hong Kong Fuck You — Now That's What I Call Hong Kong Fuck You's Greatest Hits Vol. 69": "https://f4.bcbits.com/img/a4146790812_10.jpg",
   "Hong Kong Fuck You — Third World Fighting Music": "https://f4.bcbits.com/img/a0806664989_10.jpg",
   "Hong Kong Fuck You — Happy Shitting Rainbows": "https://f4.bcbits.com/img/a3483197321_10.jpg",
   "Hong Kong Fuck You — Guilt Dispenser Split": "https://f4.bcbits.com/img/a3089359220_10.jpg",
-  "Hong Kong Fuck You — 1978-1981": "https://f4.bcbits.com/img/a1057789092_10.jpg",
+  "Hong Kong Fuck You — 1978-1981": "covers/hkfy-1978-1981.jpg",
   "First Day Back — Forward": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d2/b5/f2/d2b5f278-6242-803c-93de-0acc2feaf280/199524112877.jpg/600x600bb.jpg",
   "Electric Wizard — Dopethrone": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/fe/4b/76/fe4b76d0-7545-d93b-8ffc-5c2dc0702298/889176384448.jpg/600x600bb.jpg",
   "Elliott Smith — Either/Or": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ff/ea/28/ffea28a4-988a-f02e-7e1a-8566db3cab02/mzi.uoqucyoy.jpg/600x600bb.jpg",
@@ -1169,8 +1436,9 @@ const SAVED_COVERS = {
 
   async function albumInfo(r) {
     const key = "info2:" + keyOf(r);
+    const fix = o => { const T = TRACKS[keyOf(r)]; if (T) o.tracks = T.map((t, i) => ({disc:1, n:i + 1, title:t[0], ms:(t[1] || 0) * 1000})); return o; };
     const hit = cacheGet(key);
-    if (hit && Date.now() - hit.t < MONTH) return hit;
+    if (hit && Date.now() - hit.t < MONTH) return fix(hit);
     const out = {t:Date.now()};
     // Apple Music: tracklist, lengths, label line
     try {
@@ -1212,7 +1480,7 @@ const SAVED_COVERS = {
       }
     } catch {}
     if (out.apple || out.mbid) cacheSet(key, out);
-    return out;
+    return fix(out);
   }
 
   let current = null, openToken = 0;
