@@ -262,6 +262,46 @@ section.bin-sec{padding:44px 0 8px;scroll-margin-top:260px}
 .vitem .vt{margin-top:10px;font-family:var(--display);font-weight:600;font-size:17px;line-height:1.1;color:#ece0c6}
 .vitem .va{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a08e72;margin-top:2px}
 @media (max-width:520px){.picks{grid-template-columns:repeat(2,1fr)}.wall{padding:16px;gap:18px 12px}}
+
+/* ---------- real bins ---------- */
+.floor{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:34px 26px;padding:8px 0 20px}
+.crate{position:relative;padding:0 18px;outline:none}
+.crate:focus-visible .cfront{box-shadow:0 0 0 3px var(--accent)}
+.cback{position:absolute;left:0;right:0;top:calc(var(--peek,0px) + 6px);bottom:96px;background:linear-gradient(90deg,#6b4a2c,#8a6240 12%,#7a5535 50%,#8a6240 88%,#6b4a2c);border-radius:3px 3px 0 0;box-shadow:inset 0 10px 18px rgba(0,0,0,.35)}
+.cback::before,.cback::after{content:"";position:absolute;top:0;bottom:0;width:18px;background:repeating-linear-gradient(0deg,#9a7049 0 3px,#8d6541 3px 9px);}
+.cback::before{left:0}.cback::after{right:0}
+.stack{position:relative;aspect-ratio:1;margin-top:128px;perspective:900px;z-index:1}
+.stack .card{position:absolute;inset:0;margin:0;transform-origin:50% 100%;transition:transform .42s cubic-bezier(.2,.8,.25,1),opacity .3s,filter .3s;will-change:transform;box-shadow:0 -2px 6px rgba(0,0,0,.25)}
+.stack .card .cover{position:absolute;inset:0;aspect-ratio:auto;height:100%}
+.stack .card .meta{display:none}
+.stack .card.front{cursor:pointer;box-shadow:0 -4px 14px rgba(0,0,0,.35)}
+.stack .card.front:hover{transform:translateY(-44px)!important}
+.stack .card:not(.front){cursor:pointer}
+.stack .dvd{background:linear-gradient(170deg,#f6efdf,#e4d6b8);border:1px solid #c8b38c}
+.stack .dvd .dtab{position:absolute;top:-24px;height:25px;max-width:62%;padding:0 10px;background:#f6efdf;border:1px solid #c8b38c;border-bottom:0;border-radius:6px 6px 0 0;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;line-height:24px;color:#4a3a26;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stack .dvd .dbody{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column;justify-content:flex-start}
+.stack .dvd .dbody b{font-family:var(--display);font-weight:700;font-size:30px;line-height:1;color:#2b2016}
+.stack .dvd .dbody i{font-size:13px;color:#8a6838;margin-top:6px}
+.cfront{position:relative;z-index:600;margin:-74px -18px 0;height:96px;border-radius:2px 2px 4px 4px;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 31px,rgba(40,20,5,.35) 31px 32px),linear-gradient(90deg,#9b6f45,#b88a5c 20%,#a87b4f 55%,#b98c5e 80%,#966a41);
+  box-shadow:0 14px 22px rgba(40,25,10,.35),inset 0 2px 0 rgba(255,235,200,.25);display:flex;align-items:center;justify-content:center}
+.cfront .stencil{position:absolute;left:18px;top:14px;font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.06em;color:rgba(30,15,5,.72);text-shadow:0 1px 0 rgba(255,230,190,.2)}
+.cfront .cnt{position:absolute;right:18px;top:20px;font-style:italic;font-size:13px;color:rgba(30,15,5,.6)}
+.cfront .handle{position:absolute;left:50%;bottom:16px;width:74px;height:20px;transform:translateX(-50%);border-radius:10px;background:#2a1a0e;box-shadow:inset 0 3px 6px rgba(0,0,0,.8)}
+.cread{display:flex;align-items:center;gap:10px;margin:12px -18px 0;min-height:46px}
+.ctext{flex:1;min-width:0;text-align:center;line-height:1.2}
+.ctext b{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctext span{display:block;font-family:var(--display);font-weight:600;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctext em{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.cbtn{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--fg);font-size:22px;line-height:1;cursor:pointer}
+.cbtn:hover:not(:disabled){background:var(--fg);color:#fff}
+.cbtn:disabled{opacity:.25;cursor:default}
+section.bin-sec .shead{border-bottom:0;justify-content:center;margin-bottom:30px}
+section.bin-sec .shead .S{background:#1d1712;color:#f3e7cf;padding:10px 28px 12px;font-size:clamp(26px,4vw,40px);box-shadow:0 8px 18px rgba(0,0,0,.25);position:relative}
+section.bin-sec .shead .S::before,section.bin-sec .shead .S::after{content:"";position:absolute;bottom:100%;width:1px;height:26px;background:#8a7a62}
+section.bin-sec .shead .S::before{left:22%}section.bin-sec .shead .S::after{right:22%}
+section.bin-sec .shead .n{position:absolute;right:0}
+section.bin-sec .shead{position:relative;padding-top:20px}
 </style>
 </head>
 <body>
@@ -406,7 +446,7 @@ const RECORDS = [
   { artist:"Dystopia", title:"Human = Garbage", year:1994, genre:"Sludge Metal" },
   { artist:"Dystopia", title:"The Aftermath", year:1999, genre:"Sludge Metal" },
   { artist:"Dystopia", title:"Dystopia", year:2008, genre:"Sludge Metal" },
-  { artist:"Deftones", title:"Adrenaline", year:1995, fav:true, genre:"Nu Metal" },
+  { artist:"Deftones", title:"Adrenaline", year:1995, genre:"Nu Metal" },
   { artist:"Deftones", title:"Around the Fur", year:1997, genre:"Nu Metal" },
   { artist:"Deftones", title:"White Pony", year:2000, genre:"Alt Metal" },
   { artist:"Deftones", title:"Deftones", year:2003, genre:"Alt Metal" },
@@ -454,11 +494,11 @@ const RECORDS = [
   { artist:"The Garden", title:"HORSESHIT ON ROUTE 66", year:2022, genre:"Punk" },
   { artist:"The Garden", title:"Bootleg", year:2026, genre:"Punk", cover:"https://coverartarchive.org/release/b4b7e3a2-6e6e-43ec-8794-f6bd0db8dacb/45615292831-500.jpg", vinylImg:"vinyl/the-garden-bootleg.jpg" },
   // H
-  { artist:"Hole", title:"Celebrity Skin", year:1998, fav:true, genre:"Alt Rock" },
+  { artist:"Hole", title:"Celebrity Skin", year:1998, genre:"Alt Rock" },
   // K
-  { artist:"Korn", title:"Korn", year:1994, fav:true, genre:"Nu Metal" },
-  { artist:"Korn", title:"Life Is Peachy", year:1996, fav:true, genre:"Nu Metal", vinylImg:"vinyl/korn-life-is-peachy.jpg" },
-  { artist:"Korn", title:"Follow the Leader", year:1998, fav:true, genre:"Nu Metal" },
+  { artist:"Korn", title:"Korn", year:1994, genre:"Nu Metal" },
+  { artist:"Korn", title:"Life Is Peachy", year:1996, genre:"Nu Metal", vinylImg:"vinyl/korn-life-is-peachy.jpg" },
+  { artist:"Korn", title:"Follow the Leader", year:1998, genre:"Nu Metal" },
   { artist:"Korn", title:"Issues", year:1999, genre:"Nu Metal" },
   { artist:"Korn", title:"Untouchables", year:2002, genre:"Nu Metal" },
   { artist:"Korn", title:"Take a Look in the Mirror", year:2003, genre:"Nu Metal" },
@@ -707,13 +747,13 @@ const RECORDS = [
   { artist:"Puzzle", title:"The Rotten Opera", year:2023, genre:"Punk" },
   { artist:"Queens of the Stone Age", title:"Songs for the Deaf", year:2002, genre:"Stoner Rock" },
   { artist:"Queens of the Stone Age", title:"...Like Clockwork", year:2013, genre:"Stoner Rock" },
-  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, fav:true, genre:"Shoegaze" },
-  { artist:"My Bloody Valentine", title:"Loveless", year:1991, fav:true, genre:"Shoegaze" },
+  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, genre:"Shoegaze" },
+  { artist:"My Bloody Valentine", title:"Loveless", year:1991, genre:"Shoegaze" },
   { artist:"My Bloody Valentine", title:"m b v", year:2013, genre:"Shoegaze" },
   // P
   { artist:"Panic! at the Disco", title:"A Fever You Can't Sweat Out", year:2005, genre:"Pop Punk", cover:"covers/panic-a-fever-you-cant-sweat-out.jpg", vinylImg:"vinyl/panic-a-fever-you-cant-sweat-out.jpg" },
   { artist:"A Perfect Circle", title:"Mer de Noms", year:2000, genre:"Alt Metal" },
-  { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, fav:true, genre:"Alt Metal" },
+  { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, genre:"Alt Metal" },
   // R
   { artist:"Radiohead", title:"Pablo Honey", year:1993, genre:"Alt Rock" },
   { artist:"Radiohead", title:"The Bends", year:1995, genre:"Alt Rock" },
@@ -1755,7 +1795,7 @@ const SAVED_COVERS = {
   /* ---------- sorting + grouping ---------- */
   const decade = r => { const y = yearNum(r.year); return y ? Math.floor(y / 10) * 10 + "s" : "Undated"; };
   const SORTS = {
-    store:  { cmp:(a,b) => secIdx(a._sec) - secIdx(b._sec) || a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title), group:r => bin === "all" ? r._sec : r._L, letters:false, bins:true },
+    store:  { cmp:(a,b) => secIdx(a._sec) - secIdx(b._sec) || a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title), group:r => r._sec, letters:false, bins:true },
     artist: { cmp:(a,b) => a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year) || a.title.localeCompare(b.title), group:r => r._L, letters:true },
     title:  { cmp:(a,b) => sortName(a.title).localeCompare(sortName(b.title)) || a._s.localeCompare(b._s), group:r => letterOf(r.title), letters:true },
     new:    { cmp:(a,b) => yearNum(b.year) - yearNum(a.year) || a._s.localeCompare(b._s), group:decade },
@@ -1808,7 +1848,7 @@ const SAVED_COVERS = {
     const groups = new Map();
     shownList.forEach(r => { const g = S.group(r); if (!groups.has(g)) groups.set(g, []); groups.get(g).push(r); });
 
-    const letterMode = S.letters || (S.bins && bin !== "all");
+    const letterMode = S.letters;
     const jump = $("jump");
     jump.classList.toggle("words", !letterMode);
     if (letterMode) {
@@ -1820,16 +1860,17 @@ const SAVED_COVERS = {
 
     const plain = !query && filter === "all" && genreSel === "all";
     const queueHere = (sortBy === "artist" || sortBy === "store") && plain && bin === "all";
-    const dividers = sortBy === "store" || sortBy === "artist";
+    const dividers = false, crates = sortBy === "store";
     for (const [g, recs] of groups) {
       const sec = document.createElement("section");
-      const isBin = S.bins && bin === "all";
+      const isBin = S.bins;
       sec.className = isBin ? "bin-sec" : "letter";
       sec.id = slug(g === "#" ? "num" : g);
       const artists = new Set(recs.map(r => r.artist)).size;
       sec.innerHTML = isBin
-        ? `<div class="shead"><div class="S">${esc(g)}</div><div class="n">${recs.length} records · ${artists} artists</div></div><div class="grid"></div>`
+        ? `<div class="shead"><div class="S">${esc(g)}</div><div class="n">${recs.length} records · ${artists} artists</div></div><div class="${crates ? "floor" : "grid"}"></div>`
         : `<div class="lhead"><div class="L${letterMode ? "" : " word"}">${esc(g)}</div><div class="rule"></div><div class="n">${String(recs.length).padStart(2,"0")}</div></div><div class="grid"></div>`;
+      if (crates) { buildCrates(sec.querySelector(".floor"), recs); list.appendChild(sec); continue; }
       const grid = sec.querySelector(".grid");
       const per = {}; if (dividers) recs.forEach(r => per[r.artist] = (per[r.artist] || 0) + 1);
       let last = null;
@@ -1855,7 +1896,85 @@ const SAVED_COVERS = {
     if (!shownList.length) list.innerHTML = `<div class="empty"><div class="big">Nothing</div><p>no records match</p></div>`;
     const artists = new Set(shownList.map(r => r.artist)).size;
     const favs = shownList.filter(r => r.fav).length;
-    $("stats").innerHTML = `<b>${shownList.length}</b> records · <b>${artists}</b> artists · <b>${favs}</b> ★`;
+    $("stats").innerHTML = `<b>${shownList.length}</b> records · <b>${artists}</b> artists` + (data.some(r => r.fav) ? ` · <b>${favs}</b> ★` : "");
+    document.querySelector('.chip.fav').hidden = !data.some(r => r.fav);
+  }
+
+
+  /* ---------- real bins: crates you flip through ---------- */
+  const VIS = 11, STEP = 11;
+  function crateChunks(recs) {
+    const groups = []; recs.forEach(r => { const g = groups[groups.length - 1]; if (g && g[0].artist === r.artist) g.push(r); else groups.push([r]); });
+    const out = []; let cur = [];
+    groups.forEach(g => { if (cur.length && cur.length + g.length > 30) { out.push(cur); cur = []; } cur.push(...g); if (cur.length >= 20) { out.push(cur); cur = []; } });
+    if (cur.length) out.push(cur);
+    return out;
+  }
+  function buildCrates(floor, recs) {
+    crateChunks(recs).forEach(chunk => {
+      const a = chunk[0]._L, b = chunk[chunk.length - 1]._L;
+      const per = {}; chunk.forEach(r => per[r.artist] = (per[r.artist] || 0) + 1);
+      const items = []; let last = null;
+      chunk.forEach(r => { if (r.artist !== last && per[r.artist] >= 2) items.push({div:r.artist, n:per[r.artist]}); last = r.artist; items.push({r}); });
+      const cr = document.createElement("div");
+      cr.className = "crate"; cr.tabIndex = 0;
+      cr.innerHTML = `<div class="cback"></div><div class="stack"></div>
+        <div class="cfront"><span class="stencil">${a === b ? a : a + " – " + b}</span><span class="handle"></span><span class="cnt">${chunk.length}</span></div>
+        <div class="cread"><button type="button" class="cbtn prev" aria-label="flip back">‹</button><div class="ctext"></div><button type="button" class="cbtn next" aria-label="flip forward">›</button></div>`;
+      const stack = cr.querySelector(".stack"), text = cr.querySelector(".ctext");
+      const els = items.map((it, i) => {
+        let el;
+        if (it.r) { el = card(it.r); el.classList.add("rec"); }
+        else {
+          el = document.createElement("div"); el.className = "card dvd";
+          let h = 0; for (const ch of it.div) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+          el.innerHTML = `<div class="dtab" style="left:${8 + h % 50}%">${esc(it.div)}</div><div class="dbody"><b>${esc(it.div)}</b><i>${it.n} records</i></div>`;
+        }
+        el._i = i;
+        el.addEventListener("click", e => { if (i !== c) { e.stopImmediatePropagation(); e.preventDefault(); go(i); } }, true);
+        el.addEventListener("mouseenter", () => say(i));
+        el.addEventListener("mouseleave", () => say(c));
+        stack.appendChild(el); return el;
+      });
+      let c = 0;
+      const label = it => it.r ? `<b>${esc(it.r.artist)}</b><span>${esc(it.r.title)}${it.r.year ? " · " + esc(it.r.year) : ""}</span>` : `<b>${esc(it.div)}</b><span>divider · ${it.n} records</span>`;
+      function say(i) { text.innerHTML = label(items[i]) + `<em>${i + 1} / ${items.length}</em>`; }
+      function lay() {
+        els.forEach((el, i) => {
+          const k = i - c;
+          el.classList.toggle("front", k === 0);
+          el.style.zIndex = 500 - Math.abs(k);
+          if (k < 0) { el.style.transform = `translateY(${k > -3 ? 30 : 46}%) rotateX(${-62 - Math.min(-k, 4) * 4}deg)`; el.style.opacity = k > -3 ? 1 : 0; el.style.pointerEvents = k === -1 ? "" : "none"; }
+          else { el.style.transform = `translateY(${-k * STEP}px) scale(${1 - k * 0.012})`; el.style.opacity = k > VIS ? 0 : 1; el.style.pointerEvents = k > VIS ? "none" : ""; }
+          el.style.filter = k > 0 ? `brightness(${1 - Math.min(k, VIS) * 0.035})` : "";
+        });
+        say(c);
+        cr.querySelector(".prev").disabled = c === 0;
+        cr.querySelector(".next").disabled = c === items.length - 1;
+      }
+      function go(i) { c = Math.max(0, Math.min(items.length - 1, i)); lay(); }
+      cr.querySelector(".prev").onclick = () => go(c - 1);
+      cr.querySelector(".next").onclick = () => go(c + 1);
+      cr.addEventListener("keydown", e => {
+        if (e.target !== cr) return;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); go(c + 1); }
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); go(c - 1); }
+        if (e.key === "Enter" && items[c].r) openAlbum(items[c].r);
+      });
+      let sx = null, sy = null;
+      stack.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+      stack.addEventListener("touchend", e => {
+        if (sx == null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(c + (dx < 0 ? 1 : -1));
+      });
+      let wl = 0;
+      stack.addEventListener("wheel", e => {
+        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+        e.preventDefault(); const t = Date.now(); if (t - wl < 140) return; wl = t; go(c + (e.deltaX > 0 ? 1 : -1));
+      }, {passive:false});
+      lay();
+      floor.appendChild(cr);
+    });
   }
 
   function setTag(t) {
