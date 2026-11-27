@@ -405,6 +405,32 @@ section.bin-sec .shead{position:relative;padding-top:20px}
 .st{font-weight:700;font-size:12px;letter-spacing:.14em;color:#7ddc6a;animation:abblink 1.6s steps(2,start) infinite}
 @keyframes abblink{50%{opacity:.35}}
 @media (max-width:640px){.ab-head,.ab-row{grid-template-columns:38px 1fr 1.3fr;}.ab-head span:nth-child(n+4),.ab-row .y,.ab-row .st{display:none}.ab-cv{width:38px;height:38px}}
+
+/* ---------- arriving soon: shop window ---------- */
+.window{margin-top:10px;padding:16px;background:linear-gradient(180deg,#2a1d12,#1c130b);border-radius:4px;box-shadow:0 18px 36px rgba(30,18,8,.35)}
+.glass{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#2b3236 0%,#151a1d 55%,#0d1113 100%);border:3px solid #0f0a06;padding:34px 30px 40px;min-height:300px}
+.paint{position:relative;z-index:2;text-align:center;margin-bottom:26px;pointer-events:none}
+.paint .p1,.paint .p2{display:inline-block;font-family:var(--display);font-weight:700;font-style:italic;font-size:clamp(44px,7vw,86px);line-height:.9;
+  background:linear-gradient(180deg,#fff1b8 0%,#e8b64a 45%,#a8761e 55%,#f3cf6a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 0 #3b2608) drop-shadow(0 0 14px rgba(240,190,80,.25))}
+.paint .p2{margin-left:.25em}
+.paint .p3{display:block;margin-top:10px;font-family:var(--mono);font-style:italic;font-size:15px;letter-spacing:.2em;color:#e6c77a;opacity:.85}
+.taped{position:relative;z-index:2;display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:34px 24px}
+.poster{position:relative;background:none;border:0;padding:0;cursor:pointer;text-align:left;color:#efe6d0;transform:translateY(var(--dy)) rotate(var(--rot));transition:transform .25s}
+.poster:hover{transform:translateY(-4px) rotate(0) scale(1.04);z-index:3}
+.poster .pc{position:relative;display:block;aspect-ratio:1;background:#2a2a2a;box-shadow:0 10px 18px rgba(0,0,0,.55)}
+.poster .pc img{width:100%;height:100%;object-fit:cover;display:block}
+.poster .wrap{position:absolute;inset:0;background:linear-gradient(125deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 28%,rgba(255,255,255,0) 62%,rgba(255,255,255,.12) 74%,rgba(255,255,255,0) 86%);pointer-events:none}
+.poster .tape{position:absolute;z-index:2;top:-9px;width:46px;height:18px;background:rgba(236,226,196,.62);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.poster .t1{left:-12px;transform:rotate(-38deg)}
+.poster .t2{right:-12px;transform:rotate(38deg)}
+.poster .pt{display:block;margin-top:9px;line-height:1.15}
+.poster .pt b{display:block;font-family:var(--display);font-weight:600;font-size:16px;color:#f3ead6}
+.poster .pt i{display:block;font-style:normal;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#b8a888;margin-top:2px}
+.glare{position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(115deg,transparent 0 18%,rgba(255,255,255,.07) 22%,transparent 30% 58%,rgba(255,255,255,.05) 63%,transparent 70%)}
+.sill{height:14px;margin:0 -16px -16px;background:linear-gradient(180deg,#4a3220,#2a1b10);border-radius:0 0 4px 4px}
+.nothing{grid-column:1/-1;text-align:center;color:#b8a888;font-style:italic}
+.jump[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1997,6 +2023,7 @@ const SAVED_COVERS = {
     const letterMode = S.letters;
     const jump = $("jump");
     jump.classList.toggle("words", !letterMode);
+    jump.hidden = !!S.bins;
     if (letterMode) {
       jump.innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").map(L =>
         `<a href="#${slug(L === "#" ? "num" : L)}" class="${groups.has(L) ? "" : "off"}">${L}</a>`).join("");
@@ -2216,51 +2243,29 @@ const SAVED_COVERS = {
       m.appendChild(st); m.appendChild(shelf);
       show(Math.floor(Math.random() * owned.length));
     }
-    // Arriving Soon: split-flap arrivals board
+    // Arriving Soon: covers taped up in the shop window
     {
       const byKey = {}; data.forEach(r => byKey[keyOf(r)] = r);
       const list = ARRIVING.map(x => x.trim()).filter(Boolean);
-      const m = mk("Arriving Soon", "");
-      const bd = document.createElement("div"); bd.className = "arrivals";
-      bd.innerHTML = `<div class="ab-top"><span class="ab-title">ARRIVALS</span><span class="ab-clock"></span></div>
-        <div class="ab-head"><span></span><span>ARTIST</span><span>RECORD</span><span>YEAR</span><span>STATUS</span></div><div class="ab-rows"></div>`;
-      const rows = bd.querySelector(".ab-rows");
-      if (!list.length) rows.innerHTML = `<div class="ab-row"><span></span><span class="fl">NO ARRIVALS</span></div>`;
-      const fields = [];
+      const m = document.createElement("div"); m.className = "moment"; box.appendChild(m);
+      const win = document.createElement("div"); win.className = "window";
+      win.innerHTML = `<div class="glass"><div class="paint"><span class="p1">Arriving</span><span class="p2">Soon</span><span class="p3">— new records on the way —</span></div><div class="taped"></div><div class="glare"></div></div><div class="sill"></div>`;
+      const wall = win.querySelector(".taped");
+      if (!list.length) wall.innerHTML = `<div class="nothing">nothing in the window yet</div>`;
       list.forEach((k, i) => {
         const [artist, title = ""] = k.split(" — ");
         const r = byKey[k] || {artist, title, type:"LP"};
-        const row = document.createElement("button"); row.type = "button"; row.className = "ab-row";
-        row.innerHTML = `<span class="ab-cv"><img alt=""></span><span class="fl a"></span><span class="fl t"></span><span class="fl y"></span><span class="st">EN ROUTE</span>`;
-        const img = row.querySelector("img");
+        const it = document.createElement("button"); it.type = "button"; it.className = "poster";
+        it.style.setProperty("--rot", (((i * 47) % 11) - 5) * 0.55 + "deg");
+        it.style.setProperty("--dy", (((i * 31) % 7) - 3) * 2 + "px");
+        it.innerHTML = `<span class="tape t1"></span><span class="tape t2"></span><span class="pc"><img alt=""><span class="wrap"></span></span><span class="pt"><b>${esc(title)}</b><i>${esc(artist)}</i></span>`;
+        const img = it.querySelector("img");
         const put = u => { if (u) img.src = u; else img.remove(); };
         const known = coverOf(r); if (known) put(known); else findCover(r).then(put).catch(() => put(null));
-        if (byKey[k]) row.addEventListener("click", () => openAlbum(byKey[k]));
-        rows.appendChild(row);
-        fields.push([row.querySelector(".a"), artist.toUpperCase(), i], [row.querySelector(".t"), title.toUpperCase(), i], [row.querySelector(".y"), String(r.year || "—"), i]);
+        if (byKey[k]) it.addEventListener("click", () => openAlbum(byKey[k]));
+        wall.appendChild(it);
       });
-      // split-flap: letters riffle then settle, row by row
-      const CH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const flip = () => fields.forEach(([el, txt, i]) => {
-        let n = 0; const steps = 10 + (i % 5) * 2;
-        el.textContent = txt.replace(/\S/g, () => CH[Math.random() * CH.length | 0]);
-        setTimeout(() => {
-          const t = setInterval(() => {
-            n++;
-            el.textContent = [...txt].map((c, j) => c === " " || j < (n / steps) * txt.length ? c : CH[Math.random() * CH.length | 0]).join("");
-            if (n >= steps) { clearInterval(t); el.textContent = txt; }
-          }, 45);
-        }, i * 90);
-      });
-      if ("IntersectionObserver" in window) {
-        const ob = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { ob.disconnect(); flip(); } }, {threshold:.15});
-        ob.observe(bd);
-      } else flip();
-      fields.forEach(([el, txt]) => el.textContent = txt);
-      const clk = bd.querySelector(".ab-clock");
-      const tick = () => { if (!document.body.contains(clk)) return clearInterval(ci); clk.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}); };
-      m.appendChild(bd);
-      const ci = setInterval(tick, 15000); clk.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+      m.appendChild(win);
     }
   }
   function labelOf(r) { return r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null; }
