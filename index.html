@@ -503,10 +503,10 @@ section.bin-sec .shead{position:relative;padding-top:20px}
 @media (max-width:560px){.wp{width:150px;margin:-6px -5px 8px}}
 
 /* ---------- night store: lamps over each aisle ---------- */
-#list.night{background:#0e0a07;border-radius:10px;padding:6px 26px 40px;margin-top:26px;box-shadow:inset 0 0 120px rgba(0,0,0,.7)}
-#list.night section.bin-sec{position:relative;padding:0 0 40px}
-#list.night section.bin-sec::before{content:"";position:absolute;left:50%;top:0;width:min(1100px,120%);height:100%;transform:translateX(-50%);pointer-events:none;opacity:.06;transition:opacity 1.2s;
-  background:radial-gradient(ellipse 48% 62% at 50% 6%,rgba(255,196,120,.55),rgba(255,170,90,.16) 45%,transparent 75%)}
+#list.night{background:none;padding:0;margin-top:26px}
+#list.night section.bin-sec{position:relative;padding:0 26px 34px;margin:0 0 34px;background:#0e0a07;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 120px rgba(0,0,0,.7),0 12px 28px rgba(30,18,8,.25)}
+#list.night section.bin-sec::before{content:"";position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:.06;transition:opacity 1.2s;
+  background:radial-gradient(ellipse 55% 75% at 50% 4%,rgba(255,196,120,.5),rgba(255,170,90,.14) 45%,transparent 78%)}
 #list.night section.bin-sec.lit::before{opacity:1;animation:flick 1.3s steps(1) 1}
 @keyframes flick{0%{opacity:.1}12%{opacity:.85}18%{opacity:.2}30%{opacity:1}36%{opacity:.4}48%,100%{opacity:1}}
 .lamp{position:relative;height:96px;display:flex;justify-content:center;z-index:2}
@@ -2236,7 +2236,7 @@ const SAVED_COVERS = {
       const items = []; let last = null;
       chunk.forEach(r => { if (r.artist !== last && per[r.artist] >= 2) items.push({div:r.artist, n:per[r.artist]}); last = r.artist; items.push({r}); });
       const cr = document.createElement("div");
-      cr.className = "crate " + (SEC_CLASS[chunk[0]._sec] || "c-wood"); cr.tabIndex = 0;
+      cr.className = "crate c-wood"; cr.tabIndex = 0;
       cr.innerHTML = `<div class="cback"></div><div class="stack"></div>
         <div class="cfront"><span class="stencil">${a === b ? a : a + " – " + b}</span><span class="handle"></span><span class="cnt">${chunk.length}</span></div>
         <div class="cread"><button type="button" class="cbtn prev" aria-label="flip back">‹</button><div class="ctext"></div><button type="button" class="cbtn next" aria-label="flip forward">›</button></div>`;
@@ -2395,36 +2395,19 @@ const SAVED_COVERS = {
       m.appendChild(st); m.appendChild(shelf);
       show(Math.floor(Math.random() * owned.length));
     }
-    // Arriving Soon: posters wheatpasted on a brick wall
+    // Arriving Soon: simple shelf (placeholder until the new display is picked)
     {
       const byKey = {}; data.forEach(r => byKey[keyOf(r)] = r);
       const list = ARRIVING.map(x => x.trim()).filter(Boolean);
-      const m = document.createElement("div"); m.className = "moment"; box.appendChild(m);
-      const wall = document.createElement("div"); wall.className = "brick";
-      const drips = [...Array(14)].map((_, i) => `<i style="left:${3 + i * 7 + (i * 13) % 5}%;height:${18 + (i * 37) % 46}px;animation-delay:${(i % 5) * .35}s"></i>`).join("");
-      wall.innerHTML = `<div class="grime"></div><div class="spray"><span class="sp1">ARRIVING</span><span class="sp2">SOON</span><span class="drips">${drips}</span></div><div class="pasted"></div>`;
-      const pasted = wall.querySelector(".pasted");
-      // old torn poster layers underneath
-      const OLD = ["#e9e2cf","#d8261f","#f4d03f","#1a3fbf","#e9e2cf","#111"];
-      for (let i = 0; i < 10; i++) pasted.insertAdjacentHTML("beforeend", `<span class="oldp" style="left:${(i * 31) % 90}%;top:${(i * 47) % 85}%;background:${OLD[i % OLD.length]};transform:rotate(${(i * 23) % 14 - 7}deg)"></span>`);
-      list.forEach((k, i) => {
+      const m = mk("Arriving Soon", "");
+      const rail = document.createElement("div"); rail.className = "rail";
+      list.forEach(k => {
         const [artist, title = ""] = k.split(" — ");
-        const r = byKey[k] || {artist, title, type:"LP"};
-        const p = document.createElement("button"); p.type = "button"; p.className = "wp";
-        const h = (i * 37 + 11) % 29;
-        p.style.setProperty("--rot", (h % 9 - 4) * 0.6 + "deg");
-        p.style.setProperty("--dy", (h % 6) * 4 - 10 + "px");
-        p.style.zIndex = 10 + (h % 8);
-        const tear = ["t-a","t-b","t-c","t-d"][h % 4];
-        p.innerHTML = `<span class="wpimg ${tear}"><img alt=""><span class="paste"></span>${h % 3 === 0 ? '<span class="rip"></span>' : ""}</span>
-          <span class="strip"><b>${esc(title)}</b><i>${esc(artist)}</i></span>`;
-        const img = p.querySelector("img");
-        const put = u => { if (u) img.src = u; else img.remove(); };
-        const known = coverOf(r); if (known) put(known); else findCover(r).then(put).catch(() => put(null));
-        if (byKey[k]) p.addEventListener("click", () => openAlbum(byKey[k]));
-        pasted.appendChild(p);
+        const r = byKey[k];
+        if (r) { rail.appendChild(card(r)); return; }
+        rail.appendChild(card({artist, title, type:"LP", _s:artist, _L:artist[0]}));
       });
-      m.appendChild(wall);
+      m.appendChild(rail);
     }
   }
   function labelOf(r) { return r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null; }
