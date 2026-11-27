@@ -2259,8 +2259,8 @@ const SAVED_COVERS = {
       fields.forEach(([el, txt]) => el.textContent = txt);
       const clk = bd.querySelector(".ab-clock");
       const tick = () => { if (!document.body.contains(clk)) return clearInterval(ci); clk.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}); };
-      const ci = setInterval(tick, 15000); tick();
       m.appendChild(bd);
+      const ci = setInterval(tick, 15000); clk.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
     }
   }
   function labelOf(r) { return r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null; }
