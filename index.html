@@ -570,6 +570,23 @@ section.bin-sec .shead{position:relative;padding-top:20px}
 .crate.c-pastel .cback::before,.crate.c-pastel .cback::after{background:#f5cfdc}
 .crate.c-pastel .cfront{background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 31px,rgba(150,60,90,.2) 31px 32px),linear-gradient(90deg,#f6b8cc,#fcd3e0 50%,#f6b8cc)}
 .crate.c-pastel .stencil{color:#9b3a5e}.crate.c-pastel .cnt{color:#9b3a5e}.crate.c-pastel .handle{background:#7a2c48}
+
+/* ---------- arriving soon: sealed & faded ---------- */
+.sealed{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,168px);gap:22px;overflow-x:auto;padding:8px 2px 16px;scrollbar-width:thin}
+.seal{background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit;font:inherit}
+.seal .sc{position:relative;display:block;aspect-ratio:1;background:#e9e2cf;box-shadow:0 6px 14px rgba(40,25,10,.18);overflow:hidden}
+.seal .sc img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(.85) contrast(.9) brightness(1.08);opacity:.62;transition:filter .45s,opacity .45s}
+.seal .wrapfx{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,0) 0 20%,rgba(255,255,255,.55) 27%,rgba(255,255,255,0) 36% 64%,rgba(255,255,255,.3) 70%,rgba(255,255,255,0) 78%),
+  linear-gradient(0deg,rgba(255,255,255,.08),rgba(255,255,255,.08));box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);transition:transform .7s ease;transform:translateX(-8%)}
+.seal .sticker{position:absolute;top:10px;right:10px;width:46px;height:46px;border-radius:50%;background:#f2d24b;color:#1d1712;display:flex;align-items:center;justify-content:center;
+  font-family:'Caveat',cursive;font-weight:700;font-size:22px;transform:rotate(-12deg);box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .35s}
+.seal:hover .sc img{filter:none;opacity:1}
+.seal:hover .wrapfx{transform:translateX(12%)}
+.seal:hover .sticker{transform:rotate(4deg) scale(1.08)}
+.seal .st{display:block;margin-top:10px;line-height:1.15}
+.seal .st b{display:block;font-family:var(--display);font-weight:600;font-size:18px}
+.seal .st i{display:block;font-style:normal;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px}
 </style>
 </head>
 <body>
@@ -2395,19 +2412,26 @@ const SAVED_COVERS = {
       m.appendChild(st); m.appendChild(shelf);
       show(Math.floor(Math.random() * owned.length));
     }
-    // Arriving Soon: simple shelf (placeholder until the new display is picked)
+    // Arriving Soon: sealed copies, faded until they're here
     {
       const byKey = {}; data.forEach(r => byKey[keyOf(r)] = r);
       const list = ARRIVING.map(x => x.trim()).filter(Boolean);
       const m = mk("Arriving Soon", "");
-      const rail = document.createElement("div"); rail.className = "rail";
-      list.forEach(k => {
+      const row = document.createElement("div"); row.className = "sealed";
+      list.forEach((k, i) => {
         const [artist, title = ""] = k.split(" — ");
-        const r = byKey[k];
-        if (r) { rail.appendChild(card(r)); return; }
-        rail.appendChild(card({artist, title, type:"LP", _s:artist, _L:artist[0]}));
+        const r = byKey[k] || {artist, title, type:"LP"};
+        const it = document.createElement("button"); it.type = "button"; it.className = "seal";
+        it.style.setProperty("--d", (i * 0.05) + "s");
+        it.innerHTML = `<span class="sc"><img alt=""><span class="wrapfx"></span><span class="sticker">soon</span></span>
+          <span class="st"><b>${esc(title)}</b><i>${esc(artist)}</i></span>`;
+        const img = it.querySelector("img");
+        const put = u => { if (u) img.src = u; else img.remove(); };
+        const known = coverOf(r); if (known) put(known); else findCover(r).then(put).catch(() => put(null));
+        if (byKey[k]) it.addEventListener("click", () => openAlbum(byKey[k]));
+        row.appendChild(it);
       });
-      m.appendChild(rail);
+      m.appendChild(row);
     }
   }
   function labelOf(r) { return r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null; }
