@@ -159,6 +159,7 @@ footer{padding:40px 0 60px;font-size:13px;letter-spacing:.2em;font-style:italic;
 .record.reallabel .hole{opacity:.0}
 .record.photo .label,.record.photo .hole{display:none}
 .record.photo .grooves{opacity:.45}
+.record.pressed .grooves{opacity:.3}
 .hole{position:absolute;left:50%;top:50%;width:3.2%;height:3.2%;transform:translate(-50%,-50%);border-radius:50%;background:#17110c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
 
 .info{padding:40px 36px 36px;font-family:var(--mono);font-size:16px;line-height:1.5}
@@ -256,6 +257,7 @@ section.bin-sec{padding:44px 0 8px;scroll-margin-top:260px}
 .vdisc{position:relative;aspect-ratio:1;border-radius:50%;background:#111;box-shadow:0 10px 24px rgba(0,0,0,.5);overflow:hidden;transition:transform .5s ease}
 .vitem:hover .vdisc{transform:rotate(25deg) scale(1.03)}
 .vdisc .g{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle,rgba(0,0,0,.16) 0 1px,rgba(255,255,255,.03) 1px 2px,transparent 2px 3.2px)}
+.vdisc.pressed .g,.vdisc.clear .g{opacity:.25}
 .vdisc .sh{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 10%,rgba(255,255,255,.2) 14%,transparent 22% 55%,rgba(255,255,255,.14) 62%,transparent 70%)}
 .vdisc .lb{position:absolute;inset:33%;border-radius:50%;background:#c9b48d center/cover no-repeat;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
 .vdisc .hl{position:absolute;left:50%;top:50%;width:4%;height:4%;transform:translate(-50%,-50%);border-radius:50%;background:#1b140e}
@@ -550,7 +552,7 @@ const RECORDS = [
   { artist:"Helmet", title:"Betty", year:1994, genre:"Alt Metal" },
   { artist:"Hole", title:"Live Through This", year:1994, genre:"Alt Rock" },
   { artist:"Holidays in United States", title:"Holidays in United States", year:2024, genre:"Emo" },
-  { artist:"Holidays in United States", title:"How to Count to Five", year:2026, genre:"Emo", own:true, vinyl:"rgba(244,242,236,.42)", labelImg:"labels/hius-how-to-count-to-five.jpg" },
+  { artist:"Holidays in United States", title:"How to Count to Five", year:2026, genre:"Emo", own:true, vinyl:"radial-gradient(circle at 34% 28%, rgba(255,255,255,.97), rgba(248,248,245,.9) 45%, rgba(236,236,232,.84))", labelImg:"labels/hius-how-to-count-to-five.jpg" },
   { artist:"Hombres G", title:"Hombres G", year:1985, genre:"Rock en Español" },
   { artist:"Hombres G", title:"La cagaste... Burt Lancaster", year:1986, genre:"Rock en Español" },
   { artist:"Hombres G", title:"Estamos locos... ¿o qué?", year:1987, genre:"Rock en Español" },
@@ -1119,7 +1121,7 @@ const SAVED_LABELS = {
   "Deftones — Adrenaline": {"img": "https://i.discogs.com/DibS-DsjlRz_ZhKq71bJhwbs9lhXEqf9buYTsVJpLI0/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4NzMw/NjMtMTQ5NDA3NTEw/OC02Nzc0LmpwZWc.jpeg", "zoom": 1, "x": 51, "y": 50.5},
   "My Chemical Romance — Three Cheers for Sweet Revenge": {"img": "https://i.discogs.com/1uVaxmjxySDWnSA9Vs9GAm8cZrmik82RyZx5QD44Otk/rs:fit/g:sm/q:90/h:591/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTY2MzEy/MDEtMTY1NzA3NTg4/Ny03NzUxLmpwZWc.jpeg", "zoom": 3.3, "x": 49.6, "y": 49.6},
   "Acid Bath — When the Kite String Pops": {"img": "https://i.discogs.com/xdXZOiTNe5ID27K-ViFNerFlG32elIsgsqHiPTHNdNQ/rs:fit/g:sm/q:90/h:600/w:589/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc4NjI5/MTQtMTY1ODIyNjky/NC03NTg0LmpwZWc.jpeg", "zoom": 1.02, "x": 49.6, "y": 49.6},
-  "Vein.fm — Errorzone": {"img": "https://i.discogs.com/MjritXHIJkGKvdYecKvlUkhs5uya19XzbI1wOEx99qE/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEzMjcy/MTUzLTE2NTg5ODI3/NzgtMTc2Ny5qcGVn.jpeg", "zoom": 1.07, "x": 52.8, "y": 50},
+  "Vein.fm — Errorzone": {"img": "https://i.discogs.com/MjritXHIJkGKvdYecKvlUkhs5uya19XzbI1wOEx99qE/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEzMjcy/MTUzLTE2NTg5ODI3/NzgtMTc2Ny5qcGVn.jpeg", "zoom": 1.2, "x": 52.8, "y": 50.5},
   "Queens of the Stone Age — Songs for the Deaf": {"img": "https://i.discogs.com/JP4IGtcemaXeVHDL73wYt7DUuB1KJC9gVkwb6_ox9Yc/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NDIz/MjQzLTE2MjM0MjEz/MzMtMzU4Mi5qcGVn.jpeg", "zoom": 1, "x": 49.6, "y": 50},
   "The Smiths — Hatful of Hollow": {"img": "https://i.discogs.com/nIm1NfMnMI687qYWReS6dCfUMJcsvhr05EYo68VPk7Q/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM3MTU3/NTQtMTQ4ODc1NDkz/Ni05MzI1LmpwZWc.jpeg", "zoom": 1, "x": 50, "y": 50},
   "Gorillaz — Demon Days": {"img": "https://i.discogs.com/Hty1q59AkSLSa8BlnaLDa7QP_nN4IbPMyGl0QPIMvo8/rs:fit/g:sm/q:90/h:500/w:500/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3NDcw/My0xMTg1OTAzNDQw/LmpwZWc.jpeg", "zoom": 1, "x": 49.6, "y": 50},
@@ -2105,7 +2107,7 @@ const SAVED_COVERS = {
         const bg = r.vinylImg ? `#111 url("${r.vinylImg}") center/cover no-repeat` : (r.vinyl ? (VCOL[r.vinyl] || r.vinyl) : "#111");
         const lz = L && L.zoom > 1 ? `background-size:${L.zoom * 100}%;background-position:${L.x ?? 50}% ${L.y ?? 50}%;` : "";
         const clear = isClear(r) ? " clear" : "";
-        it.innerHTML = `<div class="vdisc${clear}" style='background:${bg}'><div class="g"></div>${r.vinylImg && !L ? "" : `<div class="lb" style='background-image:url("${esc(lab)}");${lz}'></div><div class="hl"></div>`}<div class="sh"></div></div>
+        it.innerHTML = `<div class="vdisc${clear}${r.vinylImg || r.vinyl ? " pressed" : ""}" style='background:${bg}'><div class="g"></div>${r.vinylImg && !L ? "" : `<div class="lb" style='background-image:url("${esc(lab)}");${lz}'></div><div class="hl"></div>`}<div class="sh"></div></div>
           <div class="vt">${esc(r.title)}</div><div class="va">${esc(r.artist)}</div>`;
         it.addEventListener("click", () => openAlbum(r));
         it.addEventListener("keydown", e => { if (e.key === "Enter") openAlbum(r); });
@@ -2236,6 +2238,7 @@ const SAVED_COVERS = {
     const ownVinyl = r.vinyl ? (VINYL[r.vinyl] || r.vinyl) : null;
     $("m-vinyl").style.background = vImg ? `#111 url("${vImg}") center/cover no-repeat` : (ownVinyl || "#111");
     $("m-record").classList.toggle("photo", !!vImg && !realLabel);
+    $("m-record").classList.toggle("pressed", !!(vImg || r.vinyl));
     $("m-disc").classList.toggle("see-through", isClear(r));
     rec.classList.remove("out"); void rec.offsetWidth;
     m.hidden = false; document.body.classList.add("locked");
