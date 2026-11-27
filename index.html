@@ -302,6 +302,27 @@ section.bin-sec .shead .S::before,section.bin-sec .shead .S::after{content:"";po
 section.bin-sec .shead .S::before{left:22%}section.bin-sec .shead .S::after{right:22%}
 section.bin-sec .shead .n{position:absolute;right:0}
 section.bin-sec .shead{position:relative;padding-top:20px}
+
+/* ---------- not for sale / special orders ---------- */
+.cover .nfs-tag{position:absolute;top:6px;right:6px;z-index:3;width:46px;height:46px;border-radius:50%;background:#c8231f;color:#fff6e6;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--display);font-weight:700;font-size:8.5px;line-height:1.02;letter-spacing:.08em;transform:rotate(12deg);box-shadow:0 2px 5px rgba(0,0,0,.35);border:1.5px dashed rgba(255,240,220,.55)}
+.stack .card .nfs-tag{top:10px;right:10px}
+.cover .ord-tag{position:absolute;left:0;bottom:10px;z-index:3;background:#f2d24b;color:#1d1712;font-family:var(--display);font-weight:700;font-size:10px;letter-spacing:.14em;padding:3px 8px}
+.chip.nfs.on{background:#c8231f;border-color:#c8231f;color:#fff}
+.pill.nfs{background:#c8231f;border-color:#c8231f;color:#fff6e6;font-style:normal}
+.pill.ord{background:#f2d24b;border-color:#f2d24b;color:#1d1712;font-style:normal}
+.board{display:flex;flex-wrap:wrap;gap:26px 22px;padding:30px 26px 32px;background:#b98a5a radial-gradient(rgba(60,35,15,.22) 1px,transparent 1.5px) 0 0/7px 7px;border:10px solid #5b3d22;box-shadow:inset 0 0 22px rgba(0,0,0,.35)}
+.slip{position:relative;width:200px;background:#fffdf3;padding:16px 14px 14px;transform:rotate(var(--rot,0deg));box-shadow:0 8px 16px rgba(30,15,5,.3);font-family:'Caveat',cursive;color:#1f2a55;
+  background-image:repeating-linear-gradient(180deg,transparent 0 23px,rgba(70,110,190,.18) 23px 24px)}
+.slip .clip{position:absolute;top:-12px;left:50%;width:14px;height:30px;transform:translateX(-50%);border:3px solid #9aa0a8;border-radius:8px;border-bottom-color:transparent}
+.slip .sc{width:64px;height:64px;float:right;margin:0 0 6px 8px;background:#e9e2cf;box-shadow:0 1px 3px rgba(0,0,0,.25);transform:rotate(3deg)}
+.slip .sc img{width:100%;height:100%;object-fit:cover;display:block}
+.slip .sn{font-family:var(--display);font-weight:700;font-size:10px;letter-spacing:.14em;color:#c8231f;margin-bottom:4px}
+.slip .sh2{font-size:24px;line-height:1;font-weight:700}
+.slip .sa{font-size:19px;line-height:1.1;margin-top:3px}
+.slip .sw{clear:both;font-size:16px;color:#6a6a7a;margin-top:8px}
+.slip.empty{width:260px}
+.vdisc.clear{box-shadow:0 10px 24px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.18)}
 </style>
 </head>
 <body>
@@ -323,7 +344,9 @@ section.bin-sec .shead{position:relative;padding-top:20px}
      labelImg: "labels/…jpg" → photo of YOUR record's center label (square crop)
      vinylImg: "vinyl/…jpg" → a photo of YOUR whole record (square, record filling the frame) — spins as-is
      vinyl: "smoke"     → your record's color: black, clear, smoke, white, or any color like "#7a1f2b"
-                          (anything with vinyl or vinylImg also shows up on the Colored Vinyl wall)
+     own: true          → you actually own it: gets a NOT FOR SALE sticker and goes on the
+                          Not For Sale wall behind the counter (black vinyl + its real label unless
+                          you give it a vinyl / vinylImg pressing)
      added: "2026-11-25" → the day you added it — the 10 newest show up in New Arrivals
      pick: "…"          → a one-line note for the Staff Picks card (only shows on ★ favorites)
 
@@ -332,7 +355,7 @@ section.bin-sec .shead{position:relative;padding-top:20px}
    ===================================================================== */
 const RECORDS = [
   // A
-  { artist:"Acid Bath", title:"When the Kite String Pops", year:1994, genre:"Sludge Metal" },
+  { artist:"Acid Bath", title:"When the Kite String Pops", year:1994, genre:"Sludge Metal", own:true, vinylImg:"vinyl/acid-bath-kite-string.jpg" },
   { artist:"Acid Bath", title:"Paegan Terrorism Tactics", year:1996, genre:"Sludge Metal" },
   { artist:"Arranged in April", title:"Rooted in Desire", year:2025, genre:"Alt Rock" },
   { artist:"Alex G", title:"Trick", year:2012, genre:"Indie Rock" },
@@ -342,7 +365,7 @@ const RECORDS = [
   { artist:"Alice In Chains", title:"Alice in Chains", year:1995, genre:"Grunge" },
   { artist:"Alice In Chains", title:"Black Gives Way to Blue", year:2009, genre:"Grunge" },
   { artist:"Alice In Chains", title:"The Devil Put Dinosaurs Here", year:2013, genre:"Grunge" },
-  { artist:"Arctic Monkeys", title:"Whatever People Say I Am, That's What I'm Not", year:2006, genre:"Indie Rock" },
+  { artist:"Arctic Monkeys", title:"Whatever People Say I Am, That's What I'm Not", year:2006, genre:"Indie Rock", own:true },
   { artist:"Arctic Monkeys", title:"Favourite Worst Nightmare", year:2007, genre:"Indie Rock" },
   { artist:"Arctic Monkeys", title:"Humbug", year:2009, genre:"Indie Rock" },
   { artist:"Arctic Monkeys", title:"Suck It and See", year:2011, genre:"Indie Rock" },
@@ -351,12 +374,12 @@ const RECORDS = [
   { artist:"Arctic Monkeys", title:"The Car", year:2022, genre:"Indie Rock" },
   // B
   { artist:"Bad Brains", title:"Bad Brains", year:1982, genre:"Hardcore Punk" },
-  { artist:"beabadoobee", title:"Beatopia", year:2022, genre:"Indie Rock" },
+  { artist:"beabadoobee", title:"Beatopia", year:2022, genre:"Indie Rock", own:true, vinyl:"#4f9a4a" },
   { artist:"Beach House", title:"Teen Dream", year:2010, genre:"Dream Pop" },
   { artist:"Buzzov•en", title:"...At a Loss", year:1998, genre:"Sludge Metal" },
   { artist:"The Beatles", title:"Please Please Me", year:1963, genre:"Pop Rock" },
   { artist:"The Beatles", title:"With The Beatles", year:1963, genre:"Pop Rock" },
-  { artist:"The Beatles", title:"A Hard Day's Night", year:1964, genre:"Pop Rock" },
+  { artist:"The Beatles", title:"A Hard Day's Night", year:1964, genre:"Pop Rock", own:true },
   { artist:"The Beatles", title:"Help!", year:1965, genre:"Pop Rock" },
   { artist:"The Beatles", title:"Rubber Soul", year:1965, genre:"Folk Rock" },
   { artist:"The Beatles", title:"Revolver", year:1966, genre:"Psychedelic Rock" },
@@ -416,7 +439,7 @@ const RECORDS = [
   { artist:"The Cranberries", title:"Everybody Else Is Doing It, So Why Can't We?", year:1993, genre:"Alt Rock" },
   { artist:"The Cranberries", title:"No Need to Argue", year:1994, genre:"Alt Rock" },
   { artist:"Crowbar", title:"Odd Fellows Rest", year:1998, genre:"Sludge Metal" },
-  { artist:"Crowbar", title:"Sonic Excess in Its Purest Form", year:2001, genre:"Sludge Metal" },
+  { artist:"Crowbar", title:"Sonic Excess in Its Purest Form", year:2001, genre:"Sludge Metal", own:true, vinylImg:"vinyl/crowbar-sonic-excess.jpg", labelImg:"labels/crowbar-sonic-excess.jpg" },
   { artist:"Crowbar", title:"Crowbar", year:1993, genre:"Sludge Metal" },
   { artist:"Crowbar", title:"Time Heals Nothing", year:1995, genre:"Sludge Metal" },
   { artist:"The Cure", title:"Three Imaginary Boys", year:1979, genre:"Post-Punk" },
@@ -432,7 +455,7 @@ const RECORDS = [
   // D
   { artist:"David Bowie", title:"Hunky Dory", year:1971, genre:"Glam Rock" },
   { artist:"David Bowie", title:"The Rise and Fall of Ziggy Stardust and the Spiders from Mars", year:1972, genre:"Glam Rock" },
-  { artist:"Dazey and the Scouts", title:"Maggot", year:2017, genre:"Punk" },
+  { artist:"Dazey and the Scouts", title:"Maggot", year:2017, genre:"Punk", own:true, vinylImg:"vinyl/dazey-maggot.jpg", labelImg:"labels/dazey-maggot.jpg" },
   { artist:"Dead Kennedys", title:"Fresh Fruit for Rotting Vegetables", year:1980, genre:"Hardcore Punk" },
   { artist:"Dead Kennedys", title:"Frankenchrist", year:1985, genre:"Hardcore Punk" },
   { artist:"Dead Kennedys", title:"Give Me Convenience or Give Me Death", year:1987, type:"CP", genre:"Hardcore Punk" },
@@ -446,7 +469,7 @@ const RECORDS = [
   { artist:"Dystopia", title:"Human = Garbage", year:1994, genre:"Sludge Metal" },
   { artist:"Dystopia", title:"The Aftermath", year:1999, genre:"Sludge Metal" },
   { artist:"Dystopia", title:"Dystopia", year:2008, genre:"Sludge Metal" },
-  { artist:"Deftones", title:"Adrenaline", year:1995, genre:"Nu Metal" },
+  { artist:"Deftones", title:"Adrenaline", year:1995, genre:"Nu Metal", own:true },
   { artist:"Deftones", title:"Around the Fur", year:1997, genre:"Nu Metal" },
   { artist:"Deftones", title:"White Pony", year:2000, genre:"Alt Metal" },
   { artist:"Deftones", title:"Deftones", year:2003, genre:"Alt Metal" },
@@ -485,11 +508,11 @@ const RECORDS = [
   { artist:"Free Kitten", title:"Nice Ass", year:1995, genre:"Noise Rock" },
   { artist:"Fugazi", title:"13 Songs", year:1989, genre:"Post-Hardcore" },
   { artist:"Fugazi", title:"The Argument", year:2001, genre:"Post-Hardcore" },
-  { artist:"Fleshwater", title:"We're Not Here to Be Loved", year:2022, genre:"Alt Metal", labelImg:"labels/fleshwater-were-not-here-to-be-loved.jpg", vinyl:"smoke" },
-  { artist:"Fleshwater", title:"2000: In Search of the Endless Sky", year:2025, genre:"Alt Metal", cover:"https://coverartarchive.org/release/13923c14-4327-470f-acc2-7ffd761618ac/42623322359-500.jpg", vinylImg:"vinyl/fleshwater-2000.jpg" },
+  { artist:"Fleshwater", title:"We're Not Here to Be Loved", year:2022, genre:"Alt Metal", labelImg:"labels/fleshwater-were-not-here-to-be-loved.jpg", own:true, vinylImg:"vinyl/fleshwater-were-not-here-to-be-loved.jpg" },
+  { artist:"Fleshwater", title:"2000: In Search of the Endless Sky", year:2025, genre:"Alt Metal", cover:"https://coverartarchive.org/release/13923c14-4327-470f-acc2-7ffd761618ac/42623322359-500.jpg", vinylImg:"vinyl/fleshwater-2000.jpg", own:true },
   // G
   { artist:"The Garden", title:"haha", year:2015, genre:"Punk" },
-  { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018, genre:"Punk" },
+  { artist:"The Garden", title:"Mirror Might Steal Your Charm", year:2018, genre:"Punk", own:true },
   { artist:"The Garden", title:"Kiss My Super Bowl Ring", year:2020, genre:"Punk" },
   { artist:"The Garden", title:"HORSESHIT ON ROUTE 66", year:2022, genre:"Punk" },
   { artist:"The Garden", title:"Bootleg", year:2026, genre:"Punk", cover:"https://coverartarchive.org/release/b4b7e3a2-6e6e-43ec-8794-f6bd0db8dacb/45615292831-500.jpg", vinylImg:"vinyl/the-garden-bootleg.jpg" },
@@ -513,7 +536,7 @@ const RECORDS = [
   { artist:"Gojira", title:"From Mars to Sirius", year:2005, genre:"Metal" },
   { artist:"Gojira", title:"Magma", year:2016, genre:"Metal" },
   { artist:"Gorillaz", title:"Gorillaz", year:2001, genre:"Alternative" },
-  { artist:"Gorillaz", title:"Demon Days", year:2005, genre:"Alternative" },
+  { artist:"Gorillaz", title:"Demon Days", year:2005, genre:"Alternative", own:true },
   { artist:"Gorillaz", title:"Plastic Beach", year:2010, genre:"Alternative" },
   { artist:"Gorillaz", title:"Humanz", year:2017, genre:"Alternative" },
   { artist:"Gorillaz", title:"The Now Now", year:2018, genre:"Alternative" },
@@ -522,12 +545,12 @@ const RECORDS = [
   { artist:"Have a Nice Life", title:"Deathconsciousness", year:2008, genre:"Post-Punk" },
   { artist:"Have a Nice Life", title:"The Unnatural World", year:2014, genre:"Post-Punk" },
   { artist:"Haywire", title:"Conditioned for Demolition", year:2024, genre:"Hardcore" },
-  { artist:"Haywire", title:"I Don't Wanna Say Goodbye", year:2026, genre:"Hardcore" },
+  { artist:"Haywire", title:"I Don't Wanna Say Goodbye", year:2026, genre:"Hardcore", own:true },
   { artist:"Helmet", title:"Meantime", year:1992, genre:"Alt Metal" },
   { artist:"Helmet", title:"Betty", year:1994, genre:"Alt Metal" },
   { artist:"Hole", title:"Live Through This", year:1994, genre:"Alt Rock" },
   { artist:"Holidays in United States", title:"Holidays in United States", year:2024, genre:"Emo" },
-  { artist:"Holidays in United States", title:"How to Count to Five", year:2026, genre:"Emo" },
+  { artist:"Holidays in United States", title:"How to Count to Five", year:2026, genre:"Emo", own:true, vinyl:"rgba(244,242,236,.42)", labelImg:"labels/hius-how-to-count-to-five.jpg" },
   { artist:"Hombres G", title:"Hombres G", year:1985, genre:"Rock en Español" },
   { artist:"Hombres G", title:"La cagaste... Burt Lancaster", year:1986, genre:"Rock en Español" },
   { artist:"Hombres G", title:"Estamos locos... ¿o qué?", year:1987, genre:"Rock en Español" },
@@ -539,7 +562,7 @@ const RECORDS = [
   { artist:"Hong Kong Fuck You", title:"1978-1981", year:2024, type:"EP", genre:"Powerviolence" },
   { artist:"Hum", title:"You'd Prefer an Astronaut", year:1995, genre:"Alt Rock" },
   { artist:"Ill Niño", title:"Revolution Revolución", year:2001, genre:"Nu Metal" },
-  { artist:"Indigo De Souza", title:"I Love My Mom", year:2018, genre:"Indie Rock" },
+  { artist:"Indigo De Souza", title:"I Love My Mom", year:2018, genre:"Indie Rock", own:true, vinylImg:"vinyl/indigo-i-love-my-mom.jpg", labelImg:"labels/indigo-i-love-my-mom.jpg" },
   { artist:"Interpol", title:"Turn On the Bright Lights", year:2002, genre:"Post-Punk" },
   { artist:"Interpol", title:"Antics", year:2004, genre:"Post-Punk" },
   { artist:"Interpol", title:"Our Love to Admire", year:2007, genre:"Post-Punk" },
@@ -603,7 +626,7 @@ const RECORDS = [
   { artist:"Unwound", title:"The Future of What", year:1995, genre:"Post-Hardcore", added:"2026-11-25 00:10" },
   { artist:"Unwound", title:"Repetition", year:1996, genre:"Post-Hardcore", added:"2026-11-25 00:10" },
   { artist:"The Used", title:"The Used", year:2002, genre:"Emo", added:"2026-11-25 00:10" },
-  { artist:"Vein.fm", title:"Errorzone", year:2018, genre:"Metallic Hardcore", added:"2026-11-25 00:10" },
+  { artist:"Vein.fm", title:"Errorzone", year:2018, genre:"Metallic Hardcore", added:"2026-11-25 00:10", own:true, vinylImg:"vinyl/vein-errorzone.jpg" },
   { artist:"The Velvet Underground", title:"The Velvet Underground & Nico", year:1967, genre:"Art Rock", added:"2026-11-25 00:10" },
   { artist:"vs self", title:"Everything Seems Better Now", year:2020, genre:"Screamo", added:"2026-11-25 00:10" },
   { artist:"Weezer", title:"Weezer", year:1994, genre:"Alt Rock", added:"2026-11-25 00:10" },
@@ -625,7 +648,7 @@ const RECORDS = [
   { artist:"Childish Gambino", title:"Camp", year:2011, genre:"Hip Hop", added:"2026-11-25 00:10" },
   { artist:"Childish Gambino", title:"Because the Internet", year:2013, genre:"Hip Hop", added:"2026-11-25 00:10" },
   { artist:"Drake", title:"Thank Me Later", year:2010, genre:"Hip Hop", added:"2026-11-25 00:10" },
-  { artist:"Drake", title:"Take Care", year:2011, genre:"Hip Hop", added:"2026-11-25 00:10" },
+  { artist:"Drake", title:"Take Care", year:2011, genre:"Hip Hop", added:"2026-11-25 00:10", own:true },
   { artist:"Drake", title:"If You're Reading This It's Too Late", year:2015, genre:"Hip Hop", added:"2026-11-25 00:10" },
   { artist:"Kanye West", title:"The College Dropout", year:2004, genre:"Hip Hop", added:"2026-11-25 00:10" },
   { artist:"Kanye West", title:"Graduation", year:2007, genre:"Hip Hop", added:"2026-11-25 00:10" },
@@ -658,7 +681,7 @@ const RECORDS = [
   { artist:"Slipknot", title:"Iowa", year:2001, genre:"Nu Metal" },
   { artist:"Slowdive", title:"Souvlaki", year:1993, genre:"Shoegaze" },
   { artist:"The Smiths", title:"The Smiths", year:1984, genre:"Indie Rock" },
-  { artist:"The Smiths", title:"Hatful of Hollow", year:1984, type:"CP", genre:"Indie Rock" },
+  { artist:"The Smiths", title:"Hatful of Hollow", year:1984, type:"CP", genre:"Indie Rock", own:true },
   { artist:"The Smiths", title:"Meat Is Murder", year:1985, genre:"Indie Rock" },
   { artist:"The Smiths", title:"The Queen Is Dead", year:1986, genre:"Indie Rock" },
   { artist:"Snot", title:"Get Some", year:1997, genre:"Nu Metal" },
@@ -708,7 +731,7 @@ const RECORDS = [
   { artist:"Muse", title:"Absolution", year:2003, genre:"Alt Rock" },
   { artist:"my better half", title:"mybetterhalf.", year:2025, type:"EP", genre:"Screamo" },
   { artist:"My Chemical Romance", title:"I Brought You My Bullets, You Brought Me Your Love", year:2002, genre:"Emo" },
-  { artist:"My Chemical Romance", title:"Three Cheers for Sweet Revenge", year:2004, genre:"Emo" },
+  { artist:"My Chemical Romance", title:"Three Cheers for Sweet Revenge", year:2004, genre:"Emo", own:true },
   { artist:"My Chemical Romance", title:"The Black Parade", year:2006, genre:"Emo" },
   { artist:"Nailbomb", title:"Point Blank", year:1994, genre:"Metal" },
   { artist:"The Neighbourhood", title:"I Love You.", year:2013, genre:"Alt Rock" },
@@ -745,9 +768,9 @@ const RECORDS = [
   { artist:"Puzzle", title:"Tighten the Reins", year:2017, genre:"Punk" },
   { artist:"Puzzle", title:"X Hail", year:2019, genre:"Punk" },
   { artist:"Puzzle", title:"The Rotten Opera", year:2023, genre:"Punk" },
-  { artist:"Queens of the Stone Age", title:"Songs for the Deaf", year:2002, genre:"Stoner Rock" },
+  { artist:"Queens of the Stone Age", title:"Songs for the Deaf", year:2002, genre:"Stoner Rock", own:true },
   { artist:"Queens of the Stone Age", title:"...Like Clockwork", year:2013, genre:"Stoner Rock" },
-  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, genre:"Shoegaze" },
+  { artist:"My Bloody Valentine", title:"Isn't Anything", year:1988, genre:"Shoegaze", own:true },
   { artist:"My Bloody Valentine", title:"Loveless", year:1991, genre:"Shoegaze" },
   { artist:"My Bloody Valentine", title:"m b v", year:2013, genre:"Shoegaze" },
   // P
@@ -756,7 +779,7 @@ const RECORDS = [
   { artist:"A Perfect Circle", title:"Thirteenth Step", year:2003, genre:"Alt Metal" },
   // R
   { artist:"Radiohead", title:"Pablo Honey", year:1993, genre:"Alt Rock" },
-  { artist:"Radiohead", title:"The Bends", year:1995, genre:"Alt Rock" },
+  { artist:"Radiohead", title:"The Bends", year:1995, genre:"Alt Rock", own:true },
   { artist:"Radiohead", title:"OK Computer", year:1997, genre:"Art Rock" },
   { artist:"Radiohead", title:"Kid A", year:2000, genre:"Art Rock" },
   { artist:"Radiohead", title:"Amnesiac", year:2001, genre:"Art Rock" },
@@ -767,13 +790,19 @@ const RECORDS = [
   { artist:"The Smashing Pumpkins", title:"Mellon Collie and the Infinite Sadness", year:1995, genre:"Alt Rock" },
   { artist:"Sonic Youth", title:"Daydream Nation", year:1988, genre:"Noise Rock" },
   { artist:"Sonic Youth", title:"Goo", year:1990, genre:"Noise Rock" },
-  { artist:"Sonic Youth", title:"Dirty", year:1992, genre:"Noise Rock" },
+  { artist:"Sonic Youth", title:"Dirty", year:1992, genre:"Noise Rock", own:true },
   { artist:"Sonic Youth", title:"Washing Machine", year:1995, genre:"Noise Rock" },
   { artist:"Sonic Youth", title:"A Thousand Leaves", year:1998, genre:"Noise Rock" },
   { artist:"Sonic Youth", title:"Rather Ripped", year:2006, genre:"Noise Rock" },
 ];
 
 /* Bands you still want to add — one name per line */
+// SPECIAL ORDERS — the records you want next (the order board up front).
+// Swap these out whenever. Use "Artist — Title" exactly like the cover list below;
+// if it's in RECORDS it gets an ON ORDER tag in the bins and opens when clicked.
+const SPECIAL_ORDERS = [
+];
+
 // Store sections, in the order they appear on the floor
 const SECTION_ORDER = ["Rock / Alternative","Heavy","Punk / Emo / Screamo","Shoegaze / Dream Pop","Hip-Hop / R&B","Electronic","Rock en Español","Pop & Everything Else"];
 // Which bin each genre tag points to (anything not listed goes to Rock / Alternative)
@@ -1083,6 +1112,18 @@ const TRACKS = {
 ]
 };
 const SAVED_LABELS = {
+  "Haywire — I Don't Wanna Say Goodbye": {"img": "https://i.discogs.com/ku1tZbLWV5fpr7gROTU8o6GbNcwR2wfuN4NryyPAa6A/rs:fit/g:sm/q:90/h:450/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4NjEz/MTQ0LTE3OTExMjI2/NzItMjg4MC5qcGVn.jpeg", "zoom": 1, "x": 50, "y": 47},
+  "The Garden — Mirror Might Steal Your Charm": {"img": "https://i.discogs.com/g9H5_C_oBYBwqHtmUZVBv6SX_NMZG9mfje_t0QQyZSc/rs:fit/g:sm/q:90/h:586/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEyMDE1/Njc4LTE1NTE3NDM5/MTQtNzUyMS5qcGVn.jpeg", "zoom": 1.04, "x": 50, "y": 51},
+  "Drake — Take Care": {"img": "https://i.discogs.com/3VP6gMl7jLTWE6ir7NzZ0xyrTrpkgYj-_I5a8wyGPgM/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIxOTc2/MjQ5LTE2NDM2OTQ4/MDAtMjEyMS5qcGVn.jpeg", "zoom": 1.12, "x": 50, "y": 52},
+  "beabadoobee — Beatopia": {"img": "https://i.discogs.com/8WH4m3by1XQwwNe_GGl3I9LZsXkDb49G8Mw9PecTzzc/rs:fit/g:sm/q:90/h:597/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIzODYw/NTgwLTE2NjAyMzgx/MTUtNjAxMS5qcGVn.jpeg", "zoom": 1.02, "x": 50, "y": 51},
+  "Deftones — Adrenaline": {"img": "https://i.discogs.com/DibS-DsjlRz_ZhKq71bJhwbs9lhXEqf9buYTsVJpLI0/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4NzMw/NjMtMTQ5NDA3NTEw/OC02Nzc0LmpwZWc.jpeg", "zoom": 1, "x": 51, "y": 50.5},
+  "My Chemical Romance — Three Cheers for Sweet Revenge": {"img": "https://i.discogs.com/1uVaxmjxySDWnSA9Vs9GAm8cZrmik82RyZx5QD44Otk/rs:fit/g:sm/q:90/h:591/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTY2MzEy/MDEtMTY1NzA3NTg4/Ny03NzUxLmpwZWc.jpeg", "zoom": 3.3, "x": 49.6, "y": 49.6},
+  "Acid Bath — When the Kite String Pops": {"img": "https://i.discogs.com/xdXZOiTNe5ID27K-ViFNerFlG32elIsgsqHiPTHNdNQ/rs:fit/g:sm/q:90/h:600/w:589/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc4NjI5/MTQtMTY1ODIyNjky/NC03NTg0LmpwZWc.jpeg", "zoom": 1.02, "x": 49.6, "y": 49.6},
+  "Vein.fm — Errorzone": {"img": "https://i.discogs.com/MjritXHIJkGKvdYecKvlUkhs5uya19XzbI1wOEx99qE/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEzMjcy/MTUzLTE2NTg5ODI3/NzgtMTc2Ny5qcGVn.jpeg", "zoom": 1.07, "x": 52.8, "y": 50},
+  "Queens of the Stone Age — Songs for the Deaf": {"img": "https://i.discogs.com/JP4IGtcemaXeVHDL73wYt7DUuB1KJC9gVkwb6_ox9Yc/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0NDIz/MjQzLTE2MjM0MjEz/MzMtMzU4Mi5qcGVn.jpeg", "zoom": 1, "x": 49.6, "y": 50},
+  "The Smiths — Hatful of Hollow": {"img": "https://i.discogs.com/nIm1NfMnMI687qYWReS6dCfUMJcsvhr05EYo68VPk7Q/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM3MTU3/NTQtMTQ4ODc1NDkz/Ni05MzI1LmpwZWc.jpeg", "zoom": 1, "x": 50, "y": 50},
+  "Gorillaz — Demon Days": {"img": "https://i.discogs.com/Hty1q59AkSLSa8BlnaLDa7QP_nN4IbPMyGl0QPIMvo8/rs:fit/g:sm/q:90/h:500/w:500/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3NDcw/My0xMTg1OTAzNDQw/LmpwZWc.jpeg", "zoom": 1, "x": 49.6, "y": 50},
+  "Radiohead — The Bends": {"img": "https://i.discogs.com/0a6WMGTa29rjtvgt_PwCg1YGiYeg3LzvEiPeR65ElWs/rs:fit/g:sm/q:90/h:596/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE1OTQw/NjEtMTYwNjY2Nzg1/NC05MzY0LmpwZWc.jpeg", "zoom": 1, "x": 49.6, "y": 50},
   "Korn — Follow the Leader": {"img": "https://coverartarchive.org/release/87dbd4bb-15f1-4a82-bf3b-95b2ae496114/44748597887-500.jpg"},
   "Korn — Issues": {"img": "https://coverartarchive.org/release/3de8256e-7e5b-4e2b-bc30-de4808994313/44837868452-500.jpg"},
   "Alice In Chains — Dirt": {"img": "https://coverartarchive.org/release/2f0f5a06-f592-46fb-a782-6437ae81f4b9/5553910763-500.jpg"},
@@ -1631,6 +1672,7 @@ const SAVED_COVERS = {
         <div class="chips" id="chips">
           <button class="chip on" data-f="all">All</button>
           <button class="chip fav" data-f="fav">★ Favorites</button>
+          <button class="chip nfs" data-f="own">Not For Sale</button>
           <button class="chip" data-f="LP">LP</button>
           <button class="chip" data-f="EP">EP</button>
           <button class="chip" data-f="CP">Comp</button>
@@ -1702,6 +1744,7 @@ const SAVED_COVERS = {
   })();
   const secIdx = s => { const i = SECTION_ORDER.indexOf(s); return i < 0 ? 99 : i; };
   const data = RECORDS.map(r => ({...r, type:(r.type || "LP").toUpperCase(), _s:sortName(r.artist), _L:letterOf(r.artist), _sec:HOME[r.artist]}));
+  const ORDERED = new Set(SPECIAL_ORDERS.map(x => x.trim()));
   let filter = "all", query = "", sortBy = "store", genreSel = "all", bin = "all", shownList = [];
 
   /* ---------- small helpers ---------- */
@@ -1805,6 +1848,7 @@ const SAVED_COVERS = {
 
   function matches(r) {
     if (filter === "fav" && !r.fav) return false;
+    if (filter === "own" && !r.own) return false;
     if (["LP","EP","CP"].includes(filter) && r.type !== filter) return false;
     if (genreSel !== "all" && (r.genre || "") !== genreSel) return false;
     if (bin !== "all" && r._sec !== bin) return false;
@@ -1822,6 +1866,7 @@ const SAVED_COVERS = {
     el.innerHTML = `
       <div class="cover">
         ${r.fav ? '<div class="star">★</div>' : ""}
+        ${r.own ? '<div class="nfs-tag">NOT<br>FOR<br>SALE</div>' : (ORDERED.has(keyOf(r)) ? '<div class="ord-tag">ON ORDER</div>' : "")}
         <div class="ph"><div class="pa">${esc(r.artist)}</div><div class="pt">${esc(r.title)}</div></div>
         <img alt="" loading="lazy">
       </div>
@@ -2024,16 +2069,43 @@ const SAVED_COVERS = {
       });
       m.appendChild(g);
     }
-    // Colored Vinyl wall
-    const colored = data.filter(r => r.vinylImg || r.vinyl);
-    if (colored.length) {
-      const m = mk("Colored Vinyl", "the wall behind the register — my actual pressings");
+    // Special Orders board
+    {
+      const m = mk("Special Orders", "on the board by the register — what's coming in next");
+      const board = document.createElement("div"); board.className = "board";
+      const byKey = {}; data.forEach(r => byKey[keyOf(r)] = r);
+      const list = SPECIAL_ORDERS.map(x => x.trim()).filter(Boolean);
+      if (!list.length) board.innerHTML = `<div class="slip empty"><div class="sn">SPECIAL ORDER</div><div class="sh2">nothing on order right now</div><div class="sw">add "Artist — Title" to SPECIAL_ORDERS</div></div>`;
+      list.forEach((k, i) => {
+        const [artist, title = ""] = k.split(" — ");
+        const r = byKey[k] || {artist, title, type:"LP"};
+        const sl = document.createElement("div"); sl.className = "slip"; sl.tabIndex = 0;
+        sl.style.setProperty("--rot", ((i * 37) % 7 - 3) * 0.7 + "deg");
+        sl.innerHTML = `<div class="clip"></div><div class="sc"><img alt=""></div>
+          <div class="sn">SPECIAL ORDER Nº ${String(i + 1).padStart(3, "0")}</div>
+          <div class="sh2">${esc(title)}</div><div class="sa">${esc(artist)}</div>
+          <div class="sw">for: Joel · call when it's in</div>`;
+        const img = sl.querySelector("img");
+        const show = u => { if (u) img.src = u; else img.remove(); };
+        const known = coverOf(r); if (known) show(known); else findCover(r).then(show).catch(() => show(null));
+        if (byKey[k]) { sl.addEventListener("click", () => openAlbum(byKey[k])); sl.style.cursor = "pointer"; }
+        board.appendChild(sl);
+      });
+      m.appendChild(board);
+    }
+    // Not For Sale wall: the records actually owned
+    const owned = data.filter(r => r.own).sort((a, b) => a._s.localeCompare(b._s) || yearNum(a.year) - yearNum(b.year));
+    if (owned.length) {
+      const m = mk("Not For Sale", `behind the counter — the ${owned.length} I actually own`);
       const wall = document.createElement("div"); wall.className = "wall";
-      colored.forEach(r => {
+      owned.forEach(r => {
         const it = document.createElement("div"); it.className = "vitem"; it.tabIndex = 0;
-        const lab = r.labelImg || coverOf(r) || "";
-        const bg = r.vinylImg ? `#111 url("${r.vinylImg}") center/cover no-repeat` : (VCOL[r.vinyl] || r.vinyl);
-        it.innerHTML = `<div class="vdisc" style='background:${bg}'><div class="g"></div>${r.vinylImg && !r.labelImg ? "" : `<div class="lb" style='background-image:url("${esc(lab)}")'></div><div class="hl"></div>`}<div class="sh"></div></div>
+        const L = labelOf(r);
+        const lab = L ? L.img : (coverOf(r) || "");
+        const bg = r.vinylImg ? `#111 url("${r.vinylImg}") center/cover no-repeat` : (r.vinyl ? (VCOL[r.vinyl] || r.vinyl) : "#111");
+        const lz = L && L.zoom > 1 ? `background-size:${L.zoom * 100}%;background-position:${L.x ?? 50}% ${L.y ?? 50}%;` : "";
+        const clear = isClear(r) ? " clear" : "";
+        it.innerHTML = `<div class="vdisc${clear}" style='background:${bg}'><div class="g"></div>${r.vinylImg && !L ? "" : `<div class="lb" style='background-image:url("${esc(lab)}");${lz}'></div><div class="hl"></div>`}<div class="sh"></div></div>
           <div class="vt">${esc(r.title)}</div><div class="va">${esc(r.artist)}</div>`;
         it.addEventListener("click", () => openAlbum(r));
         it.addEventListener("keydown", e => { if (e.key === "Enter") openAlbum(r); });
@@ -2042,6 +2114,8 @@ const SAVED_COVERS = {
       m.appendChild(wall);
     }
   }
+  function labelOf(r) { return r.labelImg ? {img:r.labelImg, zoom:1} : (typeof SAVED_LABELS !== "undefined" && SAVED_LABELS[keyOf(r)]) || null; }
+  function isClear(r) { return /clear|smoke|rgba/.test(r.vinyl || ""); }
 
   /* ---------- album popup ---------- */
   const fmtTime = ms => { if (!ms) return ""; const s = Math.round(ms / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
@@ -2161,14 +2235,13 @@ const SAVED_COVERS = {
     const VINYL = {black:"#111", clear:"rgba(236,232,222,.22)", smoke:"rgba(70,68,64,.62)", white:"#ece8e0"};
     const ownVinyl = r.vinyl ? (VINYL[r.vinyl] || r.vinyl) : null;
     $("m-vinyl").style.background = vImg ? `#111 url("${vImg}") center/cover no-repeat` : (ownVinyl || "#111");
-    $("m-record").classList.toggle("photo", !!vImg && !r.labelImg);
-    $("m-disc").classList.toggle("see-through", /clear|smoke/.test(r.vinyl || ""));
+    $("m-record").classList.toggle("photo", !!vImg && !realLabel);
+    $("m-disc").classList.toggle("see-through", isClear(r));
     rec.classList.remove("out"); void rec.offsetWidth;
     m.hidden = false; document.body.classList.add("locked");
     setTimeout(() => { if (token === openToken) rec.classList.add("out"); }, 280);
     coverColors(src).then(c => {
       if (token !== openToken || !c) return;
-      if (!ownVinyl && !vImg) $("m-vinyl").style.background = `radial-gradient(circle at 28% 30%, ${c[1]} 0 18%, transparent 46%), radial-gradient(circle at 72% 70%, ${c[1]} 0 12%, transparent 40%), ${c[0]}`;
       current._colors = c;
       const sw = document.querySelector("#m-info .swatches");
       if (sw) sw.innerHTML = c.map(x => `<i style="background:${x}"></i>`).join("");
@@ -2183,6 +2256,8 @@ const SAVED_COVERS = {
         ${r.genre ? `<span class="pill">${esc(r.genre)}</span>` : ""}
         <span class="pill">${esc(TYPE_LONG[r.type] || r.type)}</span>
         ${r.fav ? `<span class="pill fav">★ Favorite</span>` : ""}
+        ${r.own ? `<span class="pill nfs">Not for sale · mine</span>` : ""}
+        ${!r.own && ORDERED.has(keyOf(r)) ? `<span class="pill ord">On special order</span>` : ""}
       </div>
       <h3>Release</h3><div id="m-release" class="loading">Looking it up…</div>
       <h3>Tracklist</h3><div id="m-tracks" class="loading">Loading tracks…</div>
