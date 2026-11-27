@@ -467,7 +467,7 @@ section.bin-sec .shead{position:relative;padding-top:20px}
 /* ---------- arriving soon: wheatpaste wall ---------- */
 .brick{position:relative;margin-top:10px;padding:34px 26px 50px;border-radius:4px;overflow:hidden;
   background-color:#7a3a2a;
-  background-image:linear-gradient(0deg,#cdbfae 0 3px,transparent 3px),linear-gradient(90deg,#cdbfae 0 3px,transparent 3px),linear-gradient(0deg,#cdbfae 0 3px,transparent 3px),linear-gradient(90deg,#cdbfae 0 3px,transparent 3px),
+  background-image:linear-gradient(0deg,#9e8f7f 0 3px,transparent 3px),linear-gradient(90deg,#9e8f7f 0 3px,transparent 3px),linear-gradient(0deg,#9e8f7f 0 3px,transparent 3px),linear-gradient(90deg,#9e8f7f 0 3px,transparent 3px),
     linear-gradient(135deg,#8b4433,#6b3022 60%,#7e3d2c);
   background-size:120px 44px,120px 44px,120px 44px,120px 44px,100% 100%;
   background-position:0 0,0 0,60px 22px,60px 22px,0 0;
@@ -529,7 +529,7 @@ section.bin-sec .shead{position:relative;padding-top:20px}
 .crate.c-metal .cback{background:linear-gradient(90deg,#1a1a1c,#2b2b2f 50%,#1a1a1c)}
 .crate.c-metal .cback::before,.crate.c-metal .cback::after{background:#222226}
 .crate.c-metal .cfront{background:
-  radial-gradient(circle,#8d8d93 0 2px,transparent 2.5px) 10px 10px/calc(100% - 20px) calc(100% - 20px),
+  radial-gradient(circle at 10px 10px,#8d8d93 0 2.5px,transparent 3px),radial-gradient(circle at calc(100% - 10px) 10px,#8d8d93 0 2.5px,transparent 3px),radial-gradient(circle at 10px calc(100% - 10px),#8d8d93 0 2.5px,transparent 3px),radial-gradient(circle at calc(100% - 10px) calc(100% - 10px),#8d8d93 0 2.5px,transparent 3px),
   repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 3px,transparent 3px 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,.05) 0 3px,transparent 3px 9px),
   linear-gradient(180deg,#38383d,#1f1f22);box-shadow:0 14px 22px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.12)}
 .crate.c-metal .stencil{color:#c9c9cf;font-family:'Anton',Impact,sans-serif;letter-spacing:.12em;text-shadow:0 1px 0 #000}
@@ -2244,7 +2244,7 @@ const SAVED_COVERS = {
       if (cr.classList.contains("c-punk")) {
         const fr = cr.querySelector(".cfront"); const seed = chunk.length * 7 + a.charCodeAt(0);
         for (let i = 0; i < 6; i++) { const [t, bg, fg] = STICKERS[(seed + i * 5) % STICKERS.length];
-          fr.insertAdjacentHTML("beforeend", `<span class="stk" style="left:${8 + ((seed * (i + 3)) % 80)}%;top:${10 + ((seed * (i + 7)) % 60)}%;background:${bg};color:${fg};transform:rotate(${((seed + i * 17) % 40) - 20}deg)">${t}</span>`); }
+          fr.insertAdjacentHTML("beforeend", `<span class="stk" style="left:${38 + ((seed * (i + 3)) % 50)}%;top:${8 + ((seed * (i + 7)) % 64)}%;background:${bg};color:${fg};transform:rotate(${((seed + i * 17) % 40) - 20}deg)">${t}</span>`); }
       }
       if (cr.classList.contains("c-milk")) cr.querySelector(".cfront").insertAdjacentHTML("beforeend", `<span class="tag">${["JOEL","ARCHIVE","LA","HP"][chunk.length % 4]}</span>`);
       const els = items.map((it, i) => {
